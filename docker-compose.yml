@@ -1,0 +1,27 @@
+version: 'latest'
+
+services:
+  web:
+    build: ./sums_sums
+    volumes:
+      - .:/sums_sums
+    ports:
+      - "8000:8000"
+    command: gunicorn sums_sums.wsgi:application --bind 0.0.0.0:8000
+    depends_on:
+      - db
+
+
+  db:
+    container_name: sums_pg
+    image: postgres:14.1-alpine3.15
+    environment:
+      - POSTGRES_DB=$POSTGRES_DB
+      - POSTGRES_USER=$POSTGRES_USER
+      - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./sums_sums/expense_tracker.sql:/docker-entrypoint-initdb.d/expense_tracker.sql
+      
