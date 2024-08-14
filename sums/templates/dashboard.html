@@ -1,14 +1,26 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Sum's Sums</title>
-        <script src="/testapp/testapp/htmx.min.js"></script>
+        <script src="{% static 'htmx.min.js' %}" defer></script>
     </head>
 
     <body>
         <div class="welcome-text">Welcome to this brand spanking new website dedicated to manage budgets and expenses!</div>
+        <br><br>
+        <div>Login:</div><br>
+        <form hx-post="login_submit/" hx-target="#response" hx-swap="outerHTML">
+            {% csrf_token %}
+            <label for name="username">Username:</label><br>
+            <input type="text" id="username" name="user_name"><br>
+            <label for name="password">Password:</label><br>
+            <input type="password" id="password" name="password"><br><br>
+            <input type="submit" value="Submit">
+        </form>
+        <div id="response"></div>
     </body>
 
 

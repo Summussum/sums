@@ -1,8 +1,11 @@
 asgiref==3.8.1
 Django==5.1
+django-htmx==1.19.0
 gunicorn==23.0.0
+nano==0.10.0
 packaging==24.1
 postgres==4.0
 psycopg2-binary==2.9.9
 psycopg2-pool==1.2
 sqlparse==0.5.1
+whitenoise==6.7.0
