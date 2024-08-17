@@ -6,10 +6,21 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Sum's Sums</title>
         <script src="{% static 'htmx.min.js' %}" defer></script>
+        <style>
+            h1 {text-align: center;}
+            h2 {text-align: center; font-size:18px;}
+            .centered {text-align: center;}
+        </style>
     </head>
-<nav>
-
-    
-</nav>
-
+<h2>Navigation:
+<select>
+    <option href="index">Dashboard</option>
+    <option>Chronicle</option>
+    <option href="">Import</option>
+    <option>Allocate</option>
+</select></h2>
+<hr>
+<div class="test">This is a test text</div>
+{% block content %}
+{% endblock %}
 </html>

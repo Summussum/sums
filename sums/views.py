@@ -4,7 +4,7 @@ from django.template import loader
 
 # Create your views here.
 def sums_index(request):
-    return render(request, "dashboard.html")
+    return render(request, "Login.html")
 
 def sums_login(request):
     #return render(request, "logged_in.html")

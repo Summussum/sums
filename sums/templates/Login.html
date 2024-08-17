@@ -1,25 +1,20 @@
-{% load static %}
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Sum's Sums</title>
-        <script src="{% static 'htmx.min.js' %}" defer></script>
-    </head>
+{% extends 'base.html' %}
 
-    <body>
+
+{% block content %}
+<body>
+    <div class="centered">
         <h1 class="title">Sum's Sums</h1>
-        <dd>A budgeting app by Summussum Development</dd>
+        <div>A budgeting app by Summussum Development</div>
         <br><br><br>
         <div class="welcome-text">Welcome to this brand spanking new website dedicated to manage budgets and expenses!</div>
         <br><br>
         <div>Login:</div><br>
         <form hx-post="login_submit/" hx-target="#response" hx-swap="outerHTML">
             {% csrf_token %}
-            <label for name="username">Username:</label><br>
+            <label for name="username">Username: </label>
             <input type="text" id="username" name="user_name"><br>
-            <label for name="password">Password:</label><br>
+            <label for name="password">Password:</label>
             <input type="password" id="password" name="password"><br><br>
             <input type="submit" value="Log In">
         </form>
@@ -27,8 +22,6 @@
         <br><br><br>
         <p>Or please register a new account below:</p>
         <button hx-get="">Register</button>
-    </body>
-
-
-
-</html>
+    </div>
+</body>
+{% endblock %}
