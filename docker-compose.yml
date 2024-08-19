@@ -21,7 +21,7 @@ services:
       - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
     restart: always
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - ./sums_sums/expense_tracker.sql:/docker-entrypoint-initdb.d/expense_tracker.sql
       

@@ -2,7 +2,7 @@
 
 
 {% block content %}
-<body>
+<body id="content">
     <div class="centered">
         <h1 class="title">Sum's Sums</h1>
         <div>A budgeting app by Summussum Development</div>
@@ -21,7 +21,7 @@
         <div id="response"></div>
         <br><br><br>
         <p>Or please register a new account below:</p>
-        <button hx-get="">Register</button>
+        <button hx-get="login_submit">Register</button>
     </div>
 </body>
 {% endblock %}

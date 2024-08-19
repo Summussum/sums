@@ -13,14 +13,14 @@
         </style>
     </head>
 <h2>Navigation:
-<select>
-    <option href="index">Dashboard</option>
-    <option>Chronicle</option>
-    <option href="">Import</option>
-    <option>Allocate</option>
+<select hx-on:change="htmx.ajax('GET', this.options[this.selectedIndex].dataset.url, '#content')">
+    {% block page_select %}{% endblock page_select %}
+    <option data-url="">Dashboard</option>
+    <option data-url="allocate/">Chronicle</option>
+    <option data-url="allocate/">Import</option>
+    <option data-url="allocate/">Allocate</option>
 </select></h2>
 <hr>
-<div class="test">This is a test text</div>
 {% block content %}
 {% endblock %}
 </html>

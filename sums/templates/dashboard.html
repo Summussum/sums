@@ -1,20 +1,40 @@
-{% load static %}
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Sum's Sums</title>
-        <script src="{% static 'htmx.min.js' %}" defer></script>
-    </head>
+{% extends 'base.html' %}
 
-    <body>
-        <div class="welcome-text">Welcome back, {{ username }}. What do you want to do today! </div>
-        <button hx-get=""></button>
-        </form>
-        <div id="response"></div>
-    </body>
+{% block page_select %}
+<option data-url="">Dashboard</option>
+{% endblock page_select %}
 
-
-
-</html>
+{% block content %}
+<body id="content">
+    <div class="welcome-text">Welcome back, {{ username }}. What do you want to do today? </div>
+    
+    <hr><br><br>
+    
+    <div>
+        <button hx-get="allocate/" hx-target="#content" hx-swap="outerHTML">Chronicle</button>
+        <p>Assign Transactions to Budget Categories</p>
+        <hr><br>
+        
+        <button hx-get="allocate/" hx-target="#content" hx-swap="outerHTML">Import</button>
+        <p>Load .csv files from your bank</p>
+        <hr><br>
+        
+        <button hx-get="allocate/" hx-target="#content" hx-swap="outerHTML">Allocate</button>
+        <p>Create and Edit Budget Categories</p>
+        <hr><br>
+        
+        <button hx-get="allocate/" hx-target="#content" hx-swap="outerHTML">Explore</button>
+        <p>Search and Review Records</p>
+        <hr><br>
+        
+        <button hx-get="allocate/" hx-target="#content" hx-swap="outerHTML">Edit</button>
+        <p>Manually add Transactions</p>
+        <hr><br>
+        
+        <button hx-get="allocate/" hx-target="#content" hx-swap="outerHTML">Report</button>
+        <p>Explore Reports, Graphs, and Projections for your spending habits</p>
+        <hr><br>
+    
+    </div>
+</body>
+{% endblock content %}
