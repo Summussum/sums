@@ -21,5 +21,5 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include("sums.urls")),
-    path('allocate/', include("allocator.urls"))
+    path('allocator/', include("allocator.urls"))
 ]

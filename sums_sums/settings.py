@@ -79,13 +79,26 @@ WSGI_APPLICATION = 'sums_sums.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+"""
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'OPTIONS': {
-            "service": "sums_sums",
-            "passfile": ".my_pgpass",
+            "service": "my_service",
+            "passfile": ".pgpass",
         }
+    }
+}
+"""
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'budget_tracker', # database name
+        'USER': 'postgres',
+        'PASSWORD': 'admin123',
+        'HOST': 'db',
+        'PORT': '5432',
     }
 }
 

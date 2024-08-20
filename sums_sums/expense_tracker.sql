@@ -1,6 +1,4 @@
 
-
-DROP DATABASE IF EXISTS budget_tracker;
 CREATE DATABASE budget_tracker;
 
 \c budget_tracker
@@ -8,12 +6,13 @@ CREATE DATABASE budget_tracker;
 
 CREATE TABLE users (
     username TEXT PRIMARY KEY,
-    password TEXT NOT NULL
+    passwd TEXT NOT NULL,
+    email TEXT NOT NULL
 );
 
 CREATE TABLE banks (
     bank_id SERIAL PRIMARY KEY,
-    name TEXT NOT NULL,
+    bank_name TEXT NOT NULL,
     fieldnames TEXT []
 );
 
@@ -65,7 +64,7 @@ CREATE TABLE transactions (
     amount NUMERIC NOT NULL,
     transaction_date DATE NOT NULL,
     transaction_description TEXT,
-    account_id FLOAT NOT NULL,
+    account_id INT NOT NULL,
     budget_id INT,
     note TEXT,
     recurring BOOLEAN,
@@ -78,3 +77,5 @@ CREATE TABLE transactions (
         REFERENCES budgets
         ON DELETE SET NULL
 );
+
+INSERT INTO users (username, passwd, email) VALUES ('test', 'admin123', 'testing@testing.com');

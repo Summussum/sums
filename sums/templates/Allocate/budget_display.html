@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<div id="budget_display">
+    
+    <table>
+        <thead>
+            <tr>
+                <th></th>
+                <th>Category Name</th>
+                <th>Monthly Budget</th>
+                <th>Yearly Budget</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in category_list %}
+            <tr>
+                <td><button>Edit</button></td>
+                <td>{{ item.category_name }}</td>
+                <td>{{ item.monthly_budget }}</td>
+                <td>{{ item.annual_budget }}</td>
+                <td><button>Delete</button></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+
+</div>
