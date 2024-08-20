@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from django_htmx.http import retarget
+
 from django.db import models
 from django.template import loader
 from sums.models import Budgets, Users
@@ -14,11 +14,11 @@ def create_budget_category(request):
     user = Users.objects.get(username="test")
     new_category_name = request.POST.get("category_name")
     amount = request.POST.get("amount")
-    try:
-        Budgets.objects.filter(new_category_name)
+    if Budgets.objects.filter(category_name=new_category_name).exists():
         response = render(request, "Allocate/category_already_exists.html")
-        return retarget(response, "#category_already_exists")
-    except:
+        response["HX-Retarget"] = "#category_already_exists"
+        return response
+    else:
         if request.POST.get("annual"):
             new_budget = Budgets(username=user,category_name=new_category_name,annual_budget=amount)
         else:
@@ -32,6 +32,6 @@ def display_active_budget(request):
         category_list.append(object)
     context = {"category_list": category_list}
     template = loader.get_template("Allocate/budget_display.html")
-    return HttpResponse(template.render(context))
+    return HttpResponse(template.render(context, request))
 
 
