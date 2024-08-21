@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <div id="budget_display">
     <div id="category_already_exists"></div>
+    
+    <div style="width:500;height:80">
+        {{ graph_div|safe }}
+    </div>
+
+
     <table>
         <thead>
             <tr>
@@ -23,6 +29,5 @@
             {% endfor %}
         </tbody>
     </table>
-
 
 </div>

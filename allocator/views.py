@@ -4,6 +4,7 @@ from django.http import HttpResponse
 from django.db import models
 from django.template import loader
 from sums.models import Budgets, Users
+from sums.graphs import return_pie, return_pie3
 
 # Create your views here.
 
@@ -30,7 +31,8 @@ def display_active_budget(request):
     category_list = []
     for object in Budgets.objects.all():
         category_list.append(object)
-    context = {"category_list": category_list}
+    graph_div = return_pie3()
+    context = {"category_list": category_list, "graph_div": graph_div}
     template = loader.get_template("Allocate/budget_display.html")
     return HttpResponse(template.render(context, request))
 
