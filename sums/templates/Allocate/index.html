@@ -11,7 +11,7 @@
     <div class="centered">
         <p class="welcome-text">Welcome to Allocate!</p>
 
-        <form hx-post="allocator/create_budget_category/" hx-target="#budget_display">{% csrf_token %}
+        <form hx-post="allocator/create_budget_category/" hx-target="#budget_display">
             <label for name="category_name">Category name:</label>
             <input type="text" name="category_name"><br>
             <br>

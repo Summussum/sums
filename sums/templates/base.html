@@ -21,6 +21,8 @@
     <option data-url="allocator/">Allocate</option>
 </select></h2>
 <hr>
+<body hx-headers='{"X-CSRFToken": "{{csrf_token}}"}'>
 {% block content %}
 {% endblock %}
+</body>
 </html>

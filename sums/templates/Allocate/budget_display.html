@@ -6,7 +6,7 @@
         {{ graph_div|safe }}
     </div>
 
-
+    <div id="budget_editor"></div>
     <table>
         <thead>
             <tr>
@@ -19,12 +19,12 @@
         </thead>
         <tbody>
             {% for item in category_list %}
-            <tr>
-                <td><button>Edit</button></td>
+            <tr id="{{item.category_name}}">
+                <td><button hx-target="#budget_editor" hx-get="allocator/{{item.category_name}}" hx-swap="outerHTML">Edit</button></td>
                 <td>{{ item.category_name }}</td>
                 <td>{{ item.monthly_budget }}</td>
                 <td>{{ item.annual_budget }}</td>
-                <td><button>Delete</button></td>
+                <td><button hx-delete="allocator/{{item.category_name}}" hx-target="#{{item.category_name}}">Delete</button></td>
             </tr>
             {% endfor %}
         </tbody>
