@@ -5,6 +5,8 @@ from django.db import models
 from django.template import loader
 from sums.models import Budgets, Users
 from sums.graphs import return_pie, return_pie3
+from django.template.defaultfilters import slugify
+from copy import copy
 
 # Create your views here.
 
@@ -13,7 +15,8 @@ def index(request):
 
 def create_budget_category(request):
     user = Users.objects.get(username="test")
-    new_category_name = request.POST.get("category_name")
+    new_category_display = request.POST.get("category_display")
+    new_category_name = slugify(new_category_display)
     amount = request.POST.get("amount")
     if Budgets.objects.filter(category_name=new_category_name).exists():
         response = render(request, "Allocate/category_already_exists.html")
@@ -21,9 +24,9 @@ def create_budget_category(request):
         return response
     else:
         if request.POST.get("annual"):
-            new_budget = Budgets(username=user,category_name=new_category_name,annual_budget=amount)
+            new_budget = Budgets(username=user,category_name=new_category_name, category_display=new_category_display,annual_budget=amount)
         else:
-            new_budget = Budgets(username=user,category_name=new_category_name,monthly_budget=amount)
+            new_budget = Budgets(username=user,category_name=new_category_name,category_display=new_category_display,monthly_budget=amount)
         new_budget.save()
         return display_active_budget(request)
 
@@ -38,7 +41,9 @@ def display_active_budget(request):
 
 def allocate(request, category_name):
     if request.method == 'GET':
-        context = {"category_name": category_name}
+        category_name = category_name
+        category_display = category_name.replace("-", " ")
+        context = {"category_name": category_name, "category_display": category_display}
         html = render_block_to_string("Allocate/allocator.html", "editor", context=context, request=request)
         # html = ""
         return HttpResponse(html)
@@ -46,7 +51,8 @@ def allocate(request, category_name):
     elif request.method == 'POST':
 
         user = Users.objects.get(username="test")
-        new_category_name = request.POST.get("category_name")
+        new_category_display = request.POST.get("category_display")
+        new_category_name = slugify(new_category_display)
         amount = request.POST.get("amount")
 
         if Budgets.objects.filter(category_name=new_category_name).exists() and new_category_name != category_name:
@@ -55,9 +61,9 @@ def allocate(request, category_name):
             return response
         else:
             if request.POST.get("annual"):
-                 new_budget = Budgets(username=user,category_name=new_category_name,annual_budget=amount)
+                 new_budget = Budgets(username=user,category_name=new_category_name,category_display=new_category_display,annual_budget=amount)
             else:
-                new_budget = Budgets(username=user,category_name=new_category_name,monthly_budget=amount)
+                new_budget = Budgets(username=user,category_name=new_category_name, category_display=new_category_display,monthly_budget=amount)
             
             instance = Budgets.objects.filter(category_name=category_name)
             instance.delete()

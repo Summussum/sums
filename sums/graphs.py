@@ -65,7 +65,7 @@ def return_pie3():
     amounts = []
     budgets = Budgets.objects.all()
     for object in budgets:
-        labels.append(object.category_name)
+        labels.append(object.category_display)
         amounts.append(object.monthly_budget)
 
     df = {"labels": labels, "amounts": amounts}

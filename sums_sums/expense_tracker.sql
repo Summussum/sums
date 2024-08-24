@@ -51,6 +51,7 @@ CREATE TABLE budgets (
     budget_id SERIAL PRIMARY KEY,
     username TEXT NOT NULL,
     category_name TEXT NOT NULL,
+    category_display TEXT NOT NULL,
     monthly_budget NUMERIC,
     annual_budget NUMERIC,
     CONSTRAINT fk_budgets_users

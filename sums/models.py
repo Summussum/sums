@@ -62,6 +62,7 @@ class Budgets(models.Model):
     budget_id = models.AutoField(primary_key=True)
     username = models.ForeignKey('Users', models.DO_NOTHING, db_column='username')
     category_name = models.TextField()
+    category_display = models.TextField()
     monthly_budget = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
     annual_budget = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
 

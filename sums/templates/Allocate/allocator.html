@@ -2,7 +2,7 @@
 {% block data %}
 <tr id="{{item.category_name}}">
     <td><button hx-target="#budget_editor" hx-get="allocator/{{item.category_name}}" hx-swap="outerHTML">Edit</button></td>
-    <td>{{ item.category_name }}</td>
+    <td>{{ item.category_display }}</td>
     <td>{{ item.monthly_budget }}</td>
     <td>{{ item.annual_budget }}</td>
     <td><button hx-delete="allocator/{{item.category_name}}" hx-target="#{{category_name}}">Delete</button></td>
@@ -15,7 +15,7 @@
 <div id="budget_editor">
     <form>
         <input type="button" hx-get="allocator/reset/{{category_name}}" hx-target="#budget_display" value="Cancel" hx-swap="outerHTML">
-        <input type="text" name="category_name" value="{{category_name}}">
+        <input type="text" name="category_display" value="{{category_display}}">
         <input type="text" name="amount" value="{{amount}}">
         <input type="checkbox" name="annual"><div> Annual expense</div>
         <input type="submit" hx-post="allocator/{{category_name}}" hx-target="#budget_display" hx-swap="outerHTML"></button>
