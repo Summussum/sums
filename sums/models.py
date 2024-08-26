@@ -71,3 +71,4 @@ class Budgets(models.Model):
         db_table = 'budgets'
 
 
+# INSERT INTO users (username, "password", email) VALUES ('test', 'admin123', 'testing@testing.com');

@@ -4,9 +4,8 @@ from render_block import render_block_to_string
 from django.db import models
 from django.template import loader
 from sums.models import Budgets, Users
-from sums.graphs import return_pie, return_pie3
+from sums.graphs import return_pie
 from django.template.defaultfilters import slugify
-from copy import copy
 
 # Create your views here.
 
@@ -34,7 +33,7 @@ def display_active_budget(request):
     category_list = []
     for object in Budgets.objects.all():
         category_list.append(object)
-    graph_div = return_pie3()
+    graph_div = return_pie()
     context = {"category_list": category_list, "graph_div": graph_div}
     template = loader.get_template("Allocate/budget_display.html")
     return HttpResponse(template.render(context, request))
@@ -90,4 +89,5 @@ def reset(request, category_name):
     context = {"category_name": budget.category_name, "monthly_budget": budget.monthly_budget, "annual_budget": budget.annual_budget}
     html = render_block_to_string("Allocate/allocator.html", "data", context=context, request=request)
     return HttpResponse(html)"""
+    # the above commented block was removed due to forms not working inside tables in HTML
 
