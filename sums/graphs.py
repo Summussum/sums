@@ -11,14 +11,16 @@ import plotly
 def return_pie():
     labels = []
     amounts = []
+    total = 0
     budgets = Budgets.objects.all()
     for object in budgets:
-        labels.append(object.category_display)
+        labels.append(f"{object.category_display}: ${object.monthly_budget}")
         amounts.append(object.monthly_budget)
+        total += object.monthly_budget
 
     df = {"labels": labels, "amounts": amounts}
 
-    fig = px.pie(df, values='amounts', names='labels', title='Budget Breakdown')
+    fig = px.pie(df, values='amounts', names='labels', title=f'Monthly Total: ${total}')
     fig.show()
     graph_div = plotly.offline.plot(fig, auto_open = False, output_type="div")
     return graph_div
