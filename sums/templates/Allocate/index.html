@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block page_select %}
-<option data-url="allocator/">Allocate</option>
+<option data-url="/allocator/">Allocate</option>
 {% endblock page_select %}
 
 
@@ -11,7 +11,7 @@
     <div class="centered">
         <p class="welcome-text">Welcome to Allocate!</p>
 
-        <form hx-post="allocator/create_budget_category/" hx-target="#budget_display">
+        <form hx-post="/allocator/create_budget_category/" hx-target="#budget_display">
             <label for name="category_display">Category name:</label>
             <input type="text" name="category_display"><br>
             <br>
@@ -24,7 +24,7 @@
         </form>
         <br>
         <p>Click to load your current budgets:</p>
-        <button hx-get="allocator/display_active_budget/" hx-target="#budget_display" hx-swap="outerHTML">View Active Budget</button><br>
+        <button hx-get="/allocator/display_active_budget/" hx-target="#budget_display" hx-swap="outerHTML">View Active Budget</button><br>
         <div id="budget_display"><div id="category_already_exists"></div></div>
 
     </div>

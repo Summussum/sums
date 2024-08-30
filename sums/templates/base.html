@@ -15,10 +15,10 @@
 <h2>Navigation:
 <select hx-on:change="htmx.ajax('GET', this.options[this.selectedIndex].dataset.url, '#content')">
     {% block page_select %}{% endblock page_select %}
-    <option data-url="">Dashboard</option>
-    <option data-url="allocator/">Chronicle</option>
-    <option data-url="allocator/">Import</option>
-    <option data-url="allocator/">Allocate</option>
+    <option data-url="/">Dashboard</option>
+    <option data-url="/allocator/">Chronicle</option>
+    <option data-url="/allocator/">Import</option>
+    <option data-url="/allocator/">Allocate</option>
 </select></h2>
 <hr>
 <body hx-headers='{"X-CSRFToken": "{{csrf_token}}"}'>

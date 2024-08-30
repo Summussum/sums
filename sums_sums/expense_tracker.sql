@@ -1,6 +1,4 @@
 
-CREATE DATABASE budget_tracker;
-
 \c budget_tracker
 
 

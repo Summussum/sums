@@ -1,28 +1,59 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.template import loader
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
 from . import models
+from render_block import render_block_to_string
+from django_htmx.http import HttpResponseClientRedirect
+from django.shortcuts import redirect
+
 
 # Create your views here.
 #Pages:
+@login_required
 def sums_index(request):
-    return render(request, "dashboard.html")
+    if request.user.is_authenticated:
+        context = {"username": request.user.username}
+    else:
+        context = {"username": "anonymous user"}
+    return render(request, "dashboard.html", context=context)
+
+def sums_entrypoint(request):
+    return render(request, "Login/index.html")
+
+def sums_login_form(request):
+    context = {}
+    html = render_block_to_string("Login/login.html", "login")
+    return HttpResponse(html)
+
+def sums_login_submit(request):
+    val_username = request.POST.get("user_name")
+    val_password = request.POST.get("password")
+    user = authenticate(request, username=val_username, password=val_password)
+    if user is not None:
+        login(request, user)
+        return redirect("sums_index")
+    else:
+        html = render_block_to_string("Login/welcome_text.html", "nonlogin")
+        return HttpResponse(html)
 
 
-# Partials:
-
-def sums_login(request):
-
-    #return render(request, "logged_in.html")
-    username = request.POST.get("user_name")
-    password = request.POST.get("password")
-    context = {"username": username}
-    template = loader.get_template("logged_in.html")
-    return HttpResponse(template.render(context, request))
-    # return HttpResponse("Congratulations, User! You have been logged in")
-
-def sums_register(request):
-    return render(request, "register.html")
-
-def new_user(request):
-    pass
+def sums_register_form(request):
+    html = render_block_to_string("Login/login.html", "register")
+    return HttpResponse(html)
+    
+def sums_register_submit(request):
+    new_username = request.POST.get("user_name")
+    new_email = request.POST.get("email")
+    new_password = request.POST.get("password")
+    user = User.objects.create_user(new_username, new_email, new_password)
+    user.save()
+    new_user = User.objects.filter(username=new_username).first()
+    if new_user:
+        context = {"user": new_user}
+        html = render_block_to_string("Login/welcome_text.html", "registered", context=context)
+    else:
+        html = render_block_to_string("Login/welcome_text.html", "nonregistered")
+    return HttpResponse(html)

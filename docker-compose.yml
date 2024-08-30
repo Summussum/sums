@@ -7,7 +7,7 @@ services:
       - .:/sums_sums
     ports:
       - "8000:8000"
-    command: sh -c "python3 manage.py migrate --database=sums && gunicorn sums_sums.wsgi:application --bind 0.0.0.0:8000"
+    command: sh -c "python3 manage.py migrate && gunicorn sums_sums.wsgi:application --bind 0.0.0.0:8000"
     env_file:
       - "./.env"
     depends_on:
@@ -18,7 +18,7 @@ services:
     container_name: sums_pg
     image: postgres:14.1-alpine3.15
     environment:
-      - POSTGRES_DB=$POSTGRES_AUTH_DB
+      - POSTGRES_DB=$POSTGRES_DB
       - POSTGRES_USER=$POSTGRES_USER
       - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
     restart: always
