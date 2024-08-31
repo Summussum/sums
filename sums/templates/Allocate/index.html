@@ -6,26 +6,30 @@
 
 
 {% block content %}
+
 <body id="content">
-    
+
     <div class="centered">
         <p class="welcome-text">Welcome to Allocate!</p>
 
-        <form hx-post="/allocator/create_budget_category/" hx-target="#budget_display">
+        <form hx-post="/allocator/create_budget_category/" hx-target="#budget_display">{% csrf_token %}
             <label for name="category_display">Category name:</label>
             <input type="text" name="category_display"><br>
             <br>
             <label for name="amount">Amount to allocate: $</label>
             <input type="number" step=".01" name="amount"><br><br>
-        
+
             <input type="checkbox" name="annual">
-            <label for name="annual">  Is this category tracked yearly instead of monthly?</label><br><br>
+            <label for name="annual"> Is this category tracked yearly instead of monthly?</label><br><br>
             <input type="submit" value="Submit">
         </form>
         <br>
         <p>Click to load your current budgets:</p>
-        <button hx-get="/allocator/display_active_budget/" hx-target="#budget_display" hx-swap="outerHTML">View Active Budget</button><br>
-        <div id="budget_display"><div id="category_already_exists"></div></div>
+        <button hx-get="/allocator/display_active_budget/" hx-target="#budget_display" hx-swap="outerHTML">View Active
+            Budget</button><br>
+        <div id="budget_display">
+            <div id="category_already_exists"></div>
+        </div>
 
     </div>
 
