@@ -6,7 +6,7 @@
 
 {% block content %}
 <body id="content">
-    <div class="welcome-text">Welcome back, {{ username }}. What do you want to do today? </div>
+    <div class="welcome-text" id="welcome_text">Welcome back, {{ username }}. What do you want to do today? </div>
     
     <hr><br><br>
     
@@ -15,7 +15,7 @@
         <p>Assign Transactions to Budget Categories</p>
         <hr><br>
         
-        <button hx-get="/allocator/" hx-target="#content" hx-swap="outerHTML">Import</button>
+        <button hx-get="/importer/" hx-target="#content" hx-swap="outerHTML">Import</button>
         <p>Load .csv files from your bank</p>
         <hr><br>
         

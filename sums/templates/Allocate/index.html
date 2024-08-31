@@ -10,9 +10,10 @@
 <body id="content">
 
     <div class="centered">
-        <p class="welcome-text">Welcome to Allocate!</p>
+        <p class="welcome-text" id="welcome_text">Welcome to Allocate!</p>
 
-        <form hx-post="/allocator/create_budget_category/" hx-target="#budget_display">{% csrf_token %}
+        <form hx-post="/allocator/create_budget_category/" hx-target="#budget_display">
+            {% csrf_token %}
             <label for name="category_display">Category name:</label>
             <input type="text" name="category_display"><br>
             <br>

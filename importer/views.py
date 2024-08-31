@@ -8,5 +8,5 @@ from sums.graphs import return_pie
 from django.template.defaultfilters import slugify
 
 # Create your views here.
-def importer_index(request):
+def index(request):
     return render(request, "Import/index.html")
