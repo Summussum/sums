@@ -1,0 +1,14 @@
+{% block success %}
+<div id="upload_result">Your file, {{ filename }}, has been successfully imported!</div>
+
+{% endblock %}
+
+
+
+
+{% block failed %}
+<div id="upload_result">Sorry. Your file, could not be imported. Is this a valid bank statement csv?
+    <br> {{ error }}<br>
+</div>
+
+{% endblock %}

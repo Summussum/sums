@@ -63,18 +63,10 @@ CREATE TABLE transactions (
     amount NUMERIC NOT NULL,
     transaction_date DATE NOT NULL,
     transaction_description TEXT,
-    account_id INT NOT NULL,
+    account_id INT,
     budget_id INT,
     note TEXT,
-    recurring BOOLEAN,
-    CONSTRAINT fk_transactions_accounts
-        FOREIGN KEY (account_id)
-        REFERENCES accounts (account_id)
-        ON DELETE CASCADE,
-    CONSTRAINT fk_transactions_budgets
-        FOREIGN KEY (budget_id)
-        REFERENCES budgets
-        ON DELETE SET NULL
+    recurring BOOLEAN
 );
 
 INSERT INTO users (username, passwd, email) VALUES ('test', 'admin123', 'testing@testing.com');

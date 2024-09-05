@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block page_select %}
-<option data-url="/allocator/">Import</option>
+<option data-url="/importer/">Import</option>
 {% endblock page_select %}
 
 
@@ -11,12 +11,14 @@
     <div class="centered">
         <p class="welcome-text" id="welcome_text">Welcome to Import!</p>
 
-        <form hx-post="/allocator/create_budget_category/" hx-target="#budget_display">
+        <form hx-post="/importer/file_upload/" hx-target="#upload_result" method="post" hx-encoding="multipart/form-data" enctype="multipart/form-data">
             {% csrf_token %}
+            <!-- insert a selector for bank fieldnames here -->
             <label for name="load_file">Choose a file to upload:</label><br>
             <input type="file" name="load_file" id="load_file"><br>
             <input type="submit" value="Submit">
         </form>
+        <div id="upload_result"></div>
 
     </div>
 

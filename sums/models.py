@@ -70,5 +70,16 @@ class Budgets(models.Model):
         managed = False
         db_table = 'budgets'
 
+class Transactions(models.Model):
+    transaction_id = models.AutoField(primary_key=True)
+    amount = models.FloatField()
+    transaction_date = models.DateTimeField()
+    transaction_description = models.TextField(blank=True, null=True)
+    note = models.TextField(blank=True, null=True)
+    recurring = models.BooleanField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'transactions'
 
 # INSERT INTO users (username, "password", email) VALUES ('test', 'admin123', 'testing@testing.com');
