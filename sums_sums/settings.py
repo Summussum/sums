@@ -31,6 +31,7 @@ ALLOWED_HOSTS = ['*']
 
 
 LOGIN_URL = "sums_entrypoint"
+LOGIN_REDIRECT_URL = "/"
 
 # Application definition
 

@@ -34,8 +34,8 @@ def sums_login_submit(request):
     user = authenticate(request, username=val_username, password=val_password)
     if user is not None:
         login(request, user)
-        response = redirect("sums_index")
-        response["HX-Retarget"] = "#content"
+        response = render(request, "dashboard.html", context={"username": user.username})
+        response["Hx-Redirect"] = "/"
         return response
     else:
         html = render_block_to_string("Login/welcome_text.html", "nonlogin")

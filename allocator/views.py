@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from render_block import render_block_to_string
+from django.contrib.auth.decorators import login_required
 from django.db import models
 from django.template import loader
 from sums.models import Budgets, Users
@@ -8,10 +9,11 @@ from sums.graphs import return_pie
 from django.template.defaultfilters import slugify
 
 # Create your views here.
-
+@login_required
 def index(request):
     return render(request, "Allocate/index.html")
 
+@login_required
 def create_budget_category(request):
     user = Users.objects.get(username="test")
     new_category_display = request.POST.get("category_display")
@@ -29,6 +31,7 @@ def create_budget_category(request):
         new_budget.save()
         return display_active_budget(request)
 
+@login_required
 def display_active_budget(request):
     category_list = []
     for object in Budgets.objects.all():
@@ -38,6 +41,7 @@ def display_active_budget(request):
     template = loader.get_template("Allocate/budget_display.html")
     return HttpResponse(template.render(context, request))
 
+@login_required
 def allocate(request, category_name):
     if request.method == 'GET':
         category_name = category_name
@@ -83,6 +87,7 @@ def allocate(request, category_name):
         html = f"<tr><td>Category named {category_name}: ${amount} has successfully been deleted.</td></tr>"
         return HttpResponse(html)
 
+@login_required
 def reset(request, category_name):
     return display_active_budget(request)
     """budget = Budgets.objects.filter(category_name=category_name).first()

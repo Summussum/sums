@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from render_block import render_block_to_string
+from django.contrib.auth.decorators import login_required
 from django.db import models
 from django.template import loader
 from sums.models import Budgets, Users, Transactions
@@ -9,9 +10,11 @@ from . import csv_transform
 from datetime import datetime
 
 # Create your views here.
+@login_required
 def index(request):
     return render(request, "Import/index.html")
 
+@login_required
 def csv_file_upload(request):
     translator = {
         "amount": "Withdrawals",
