@@ -13,18 +13,26 @@ NOTE: the demo site has no security guarantees and it is advised to not post any
 \
 ⠀
 ________________________________________________________________________
-                                 QUICK SETUP:
+                                 QUICK BUILD:
 
-In order to run Docker Compose, please add the following files in the current location of this file:
+This repository is set up to build the application with Docker. If you have Docker running, please navigate to the base directory, housing docker-compose.yml. From that location, run the docker CLI command:\
+`docker compose up`
 
-A .env file with the following variables:\
-POSTGRES_AUTH_DB=\<your auth db name> # set to 'sums'\
-POSTGRES_DB=\<your db name> # set to 'budget_tracker'\
-POSTGRES_USER=\<your default admin user>\
-POSTGRES_PASSWORD=\<your default admin user password>\
-POSTGRES_HOST=\<your postgres port> # set to 'db'\
-POSTGRES_PORT=\<your postgres port> # set to '5432'\
-SECRET_KEY=\<your secret key> # django defaults to 50 random characters
+As long as your environment is defined as listed below, you should now be able to navigate to the address of your local host and port 8000 in your preferred browser to access the application.\
+For example: http://127.0.0.1:8000
+
+
+NOTE: In order to run Docker Compose, please first add the following file in the same directory as docker-compose.yml:
+
+      A .env file with the following variables:
+
+      POSTGRES_AUTH_DB=<your auth db name> # set to 'sums'
+      POSTGRES_DB=<your db name> # set to 'budget_tracker'
+      POSTGRES_USER=<your default admin user>
+      POSTGRES_PASSWORD=<your default admin user password>
+      POSTGRES_HOST=<your postgres port> # set to 'db'
+      POSTGRES_PORT=<your postgres port> # set to '5432'
+      SECRET_KEY=<your secret key> # django defaults to 50 random characters
 
 
 \
