@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block page_select %}
+<option data-url="/explorer/">--Explore--</option>
+{% endblock page_select %}
+
+
+{% block content %}
+<body id="content">
+    
+    <div class="centered">
+        <p class="welcome-text" id="welcome_text">Welcome to Explore!</p>
+
+        <p>What would you like to see today?</p>
+
+        <p><a href="/explorer/records">My Expenses</a></p>
+        <p><a href="/explorer/graphs">Infographics</a></p>
+        <p><a href="/explorer/trends">My Trends</a></p>
+        <p><a href="/explorer/progress">My Goal Progress</a></p>
+
+    </div>
+
+
+</body>
+{% endblock content %}

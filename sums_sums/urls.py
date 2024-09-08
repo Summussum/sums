@@ -22,5 +22,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include("sums.urls")),
     path('allocator/', include("allocator.urls")),
+    path('explorer/', include("explorer.urls")),
     path('importer/', include("importer.urls")),
 ]

@@ -1,11 +1,12 @@
 {% extends 'base.html' %}
 
 {% block page_select %}
-<option data-url="">Dashboard</option>
+<option data-url="">--Dashboard--</option>
 {% endblock page_select %}
 
 {% block content %}
 <body id="content">
+    <div class="centered">
     <div class="welcome-text" id="welcome_text">Welcome back, {{ username }}. What do you want to do today? </div>
     
     <hr><br><br>
@@ -23,7 +24,7 @@
         <p>Create and Edit Budget Categories</p>
         <hr><br>
         
-        <button hx-get="/allocator/" hx-target="#content" hx-swap="outerHTML">Explore</button>
+        <button hx-get="/explorer/" hx-target="#content" hx-swap="outerHTML">Explore</button>
         <p>Search and Review Records</p>
         <hr><br>
         
@@ -35,6 +36,7 @@
         <p>Explore Reports, Graphs, and Projections for your spending habits</p>
         <hr><br>
     
+    </div>
     </div>
 </body>
 {% endblock content %}
