@@ -36,6 +36,7 @@ def display_active_budget(request):
     category_list = []
     for object in Budgets.objects.all():
         category_list.append(object)
+    category_list = sorted(category_list, key=lambda x: x.category_name)
     graph_div = return_pie()
     context = {"category_list": category_list, "graph_div": graph_div}
     template = loader.get_template("Allocate/budget_display.html")
@@ -44,11 +45,12 @@ def display_active_budget(request):
 @login_required
 def allocate(request, category_name):
     if request.method == 'GET':
-        category_name = category_name
-        category_display = category_name.replace("-", " ")
-        context = {"category_name": category_name, "category_display": category_display}
-        html = render_block_to_string("Allocate/allocator.html", "editor", context=context, request=request)
-        # html = ""
+        budget = Budgets.objects.filter(category_name=category_name).first()
+        if budget.monthly_budget:
+            amount = budget.monthly_budget
+        else:
+            amount = budget.annual_budget
+        html = render_block_to_string("Allocate/allocator.html", "inline_editor", context={"item": budget, "amount": amount}, request=request)
         return HttpResponse(html)
 
     elif request.method == 'POST':
@@ -71,7 +73,10 @@ def allocate(request, category_name):
             instance = Budgets.objects.filter(category_name=category_name)
             instance.delete()
             new_budget.save()
-            return display_active_budget(request)
+            budget = Budgets.objects.filter(category_name=new_budget.category_name).first()
+            context = {"item": budget}
+            html = render_block_to_string("Allocate/allocator.html", "data", context=context, request=request)
+            return HttpResponse(html)
 
 
     elif request.method == 'DELETE':
@@ -89,10 +94,8 @@ def allocate(request, category_name):
 
 @login_required
 def reset(request, category_name):
-    return display_active_budget(request)
-    """budget = Budgets.objects.filter(category_name=category_name).first()
-    context = {"category_name": budget.category_name, "monthly_budget": budget.monthly_budget, "annual_budget": budget.annual_budget}
+    budget = Budgets.objects.filter(category_name=category_name).first()
+    context = {"item": budget}
     html = render_block_to_string("Allocate/allocator.html", "data", context=context, request=request)
-    return HttpResponse(html)"""
-    # the above commented block was removed due to forms not working inside tables in HTML
+    return HttpResponse(html)
 

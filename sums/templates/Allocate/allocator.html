@@ -1,6 +1,6 @@
 {% block data %}
 <tr id="{{item.category_name}}">
-    <td><button hx-target="#budget_editor" hx-get="/allocator/{{item.category_name}}" hx-swap="outerHTML">Edit</button>
+    <td><button hx-target="#{{item.category_name}}" hx-get="/allocator/{{item.category_name}}" hx-swap="outerHTML">Edit</button>
     </td>
     <td>{{ item.category_display }}</td>
     <td>{{ item.monthly_budget }}</td>
@@ -14,8 +14,7 @@
 
 <div id="budget_editor">
     <form>{% csrf_token %}
-        <input type="button" hx-get="/allocator/reset/{{category_name}}" hx-target="#budget_display" value="Cancel"
-            hx-swap="outerHTML">
+        <input type="button" hx-get="/allocator/reset/{{category_name}}" hx-target="#budget_display" value="Cancel" hx-swap="outerHTML">
         <input type="text" name="category_display" value="{{category_display}}">
         <input type="text" name="amount" value="{{amount}}">
         <input type="checkbox" name="annual">
@@ -25,4 +24,19 @@
     <div id="name_in_use"></div>
 
 
-    {% endblock %}
+{% endblock %}
+
+{% block inline_editor %}
+
+<tr id="{{item.category_name}}">
+    <td><input type="button" hx-get="/allocator/reset/{{item.category_name}}" hx-target="#{{item.category_name}}" value="Cancel" hx-swap="outerHTML">
+    </td>
+    <td><input type="text" name="category_display" value="{{item.category_display}}"><div id="name_in_use"></div></td>
+    <td><input type="text" name="amount" value="{{amount}}"></td>
+    <td><input type="checkbox" name="annual"><div> Annual expense</div></td>
+    <td><button hx-post="/allocator/{{item.category_name}}" hx-target="#{{item.category_name}}" hx-include="#{{item.category_name}}" hx-swap="outerHTML">Submit</button></td>
+</tr>
+
+
+
+{% endblock %}
