@@ -21,7 +21,7 @@ def create_budget_category(request):
     amount = request.POST.get("amount")
     if Budgets.objects.filter(category_name=new_category_name).exists():
         response = render(request, "Allocate/category_already_exists.html")
-        response["HX-Retarget"] = "#category_already_exists"
+        response["HX-Retarget"] = "#error_message"
         return response
     else:
         if request.POST.get("annual"):
@@ -89,7 +89,7 @@ def allocate(request, category_name):
         else:
             amount = 0
         instance.delete()
-        html = f"<tr><td>Category named {category_name}: ${amount} has successfully been deleted.</td></tr>"
+        html = f"<tr class='deletion'><td></td><td></td><td>Category named {category_name}: ${amount} has successfully been deleted.</td><td></td><td></td></tr>"
         return HttpResponse(html)
 
 @login_required

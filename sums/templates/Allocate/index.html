@@ -24,12 +24,14 @@
             <label for name="annual"> Is this category tracked yearly instead of monthly?</label><br><br>
             <input type="submit" value="Submit">
         </form>
+        <div id="error_message"></div>
         <br>
         <p>Click to load your current budgets:</p>
         <button hx-get="/allocator/display_active_budget/" hx-target="#budget_display" hx-swap="outerHTML">View Active
             Budget</button><br>
+            
         <div id="budget_display">
-            <div id="category_already_exists"></div>
+            
         </div>
 
     </div>

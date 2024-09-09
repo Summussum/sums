@@ -5,7 +5,7 @@
     <td>{{ item.category_display }}</td>
     <td>${{ item.monthly_budget }}</td>
     <td>${{ item.annual_budget }}</td>
-    <td><button hx-delete="/allocator/{{item.category_name}}" hx-target="#{{category_name}}">Delete</button></td>
+    <td><button hx-delete="/allocator/{{item.category_name}}" hx-target="#{{item.category_name}}" hx-swap="outerHTML">Delete</button></td>
 </tr>
 {% endblock %}
 
