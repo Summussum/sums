@@ -28,16 +28,16 @@ def csv_file_upload(request):
             files.append(file.read().decode("utf-8"))
             filename = file.name
         else:
-            html = render_block_to_string("Import/upload_result.html", "failed", request=request)
+            html = render_block_to_string("Import/partials.html", "failed", request=request)
             return HttpResponse(html)
     if files:
         for f in files:
             file = csv_transform.Transformer(f, translator)
             for line in file.record:
-                entry = Transactions(amount=line["amount"], transaction_date=datetime.strptime(line["transaction_date"], '%d-%b-%Y').isoformat(), transaction_description=line["transaction_description"])
+                entry = Transactions(amount=line["amount"], transaction_date=datetime.strptime(line["transaction_date"], '%d-%b-%Y').isoformat()[:10], transaction_description=line["transaction_description"])
                 entry.save()
 
     context = {"filename": filename}
-    html = render_block_to_string("Import/upload_result.html", "success", context=context, request=request)
+    html = render_block_to_string("Import/partials.html", "success", context=context, request=request)
     return HttpResponse(html)
     

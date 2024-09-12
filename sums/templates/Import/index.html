@@ -9,16 +9,44 @@
 <body id="content">
     
     <div class="centered">
-        <p class="welcome-text" id="welcome_text">Welcome to Import!</p>
+        <h3 class="welcome-text" id="welcome_text">Welcome to Import!</h3>
 
         <form hx-post="/importer/file_upload/" hx-target="#upload_result" method="post" hx-encoding="multipart/form-data" enctype="multipart/form-data">
             {% csrf_token %}
             <!-- insert a selector for bank fieldnames here -->
             <label for name="load_file">Choose a file to upload:</label><br>
             <input type="file" name="load_file" id="load_file"><br>
+            <label for name="account">Choose upload account:</label>
+            <select name="account">
+                <option value="new">New</option>
+                {% for nickname in nicknames %}
+                <option value="{{nickname}}">{{nickname}}</option>
+                {% endfor %}
+            </select>
             <input type="submit" value="Submit">
         </form>
         <div id="upload_result"></div>
+
+        <h3>Add New Account</h3><br>
+        <form>
+            <label for name="bank">Bank: </label>
+            <input type="text" name="bank" placeholder="Bank Name">
+            <label for name="account">Account: </label>
+            <input type="text" name="account" placeholder="Account Nickname">
+            <label for name="date_format">Date Format: </label>
+            <select name="date_format">
+                <option>yyyy-mm-dd</option>
+                <option>yy-mm-dd</option>
+                <option>mm-dd-yyyy</option>
+                <option>mm-dd-yy</option>
+                <option>dd-mm-yyyy</option>
+                <option>dd-mm-yy</option>
+                <option>yyyy-dd-mm</option>
+                <option>yy-dd-mm</option>
+            </select><br>
+            <button id="account_options" hx-get="/importer/account_options/" hx-target="#account_options" hx-swap="outerHTML">Advanced Options</button><br>
+            <input type="submit" value="Add Account">
+        </form>
 
     </div>
 

@@ -4,8 +4,7 @@
 
 CREATE TABLE users (
     username TEXT PRIMARY KEY,
-    passwd TEXT NOT NULL,
-    email TEXT NOT NULL
+    email TEXT
 );
 
 CREATE TABLE banks (

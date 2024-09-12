@@ -52,6 +52,8 @@ def sums_register_submit(request):
     new_password = request.POST.get("password")
     user = User.objects.create_user(new_username, new_email, new_password)
     user.save()
+    sums_user = models.Users(username=new_username, email=new_email)
+    sums_user.save()
     new_user = User.objects.filter(username=new_username).first()
     if new_user:
         context = {"user": new_user}

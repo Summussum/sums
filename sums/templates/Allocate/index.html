@@ -15,10 +15,10 @@
         <form hx-post="/allocator/create_budget_category/" hx-target="#budget_display">
             {% csrf_token %}
             <label for name="category_display">Category name:</label>
-            <input type="text" name="category_display"><br>
+            <input type="text" name="category_display" placeholder="Savings"><br>
             <br>
             <label for name="amount">Amount to allocate: $</label>
-            <input type="number" step=".01" name="amount"><br><br>
+            <input type="number" step=".01" name="amount" placeholder="50.00"><br><br>
 
             <input type="checkbox" name="annual">
             <label for name="annual"> Is this category tracked yearly instead of monthly?</label><br><br>

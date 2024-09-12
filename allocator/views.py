@@ -15,7 +15,7 @@ def index(request):
 
 @login_required
 def create_budget_category(request):
-    user = Users.objects.get(username="test")
+    user = Users.objects.get(username=request.user.username)
     new_category_display = request.POST.get("category_display")
     new_category_name = slugify(new_category_display)
     amount = request.POST.get("amount")
@@ -34,7 +34,7 @@ def create_budget_category(request):
 @login_required
 def display_active_budget(request):
     category_list = []
-    for object in Budgets.objects.all():
+    for object in Budgets.objects.filter(username=request.user.username):
         category_list.append(object)
     category_list = sorted(category_list, key=lambda x: x.category_name)
     graph_div = return_pie()
@@ -45,7 +45,7 @@ def display_active_budget(request):
 @login_required
 def allocate(request, category_name):
     if request.method == 'GET':
-        budget = Budgets.objects.filter(category_name=category_name).first()
+        budget = Budgets.objects.filter(category_name=category_name, username=request.user.username).first()
         if budget.monthly_budget:
             amount = budget.monthly_budget
         else:
@@ -55,7 +55,7 @@ def allocate(request, category_name):
 
     elif request.method == 'POST':
 
-        user = Users.objects.get(username="test")
+        user = Users.objects.get(username=request.user.username)
         new_category_display = request.POST.get("category_display")
         new_category_name = slugify(new_category_display)
         amount = request.POST.get("amount")

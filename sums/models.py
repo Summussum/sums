@@ -10,7 +10,6 @@ from django.contrib.auth.models import User
 
 class Users(models.Model):
     username = models.TextField(primary_key=True)
-    passwd = models.TextField()
     email = models.TextField()
 
 
@@ -73,7 +72,7 @@ class Budgets(models.Model):
 class Transactions(models.Model):
     transaction_id = models.AutoField(primary_key=True)
     amount = models.FloatField()
-    transaction_date = models.DateTimeField()
+    transaction_date = models.DateField()
     transaction_description = models.TextField(blank=True, null=True)
     note = models.TextField(blank=True, null=True)
     recurring = models.BooleanField(blank=True, null=True)
