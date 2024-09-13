@@ -7,25 +7,6 @@ CREATE TABLE users (
     email TEXT
 );
 
-CREATE TABLE banks (
-    bank_id SERIAL PRIMARY KEY,
-    bank_name TEXT NOT NULL,
-    fieldnames TEXT []
-);
-
-CREATE TABLE banks_users (
-    username TEXT NOT NULL,
-    bank_id INT NOT NULL,
-    PRIMARY KEY (username, bank_id),
-    CONSTRAINT fk_banks_users_banks
-        FOREIGN KEY (bank_id)
-        REFERENCES banks (bank_id)
-        ON DELETE CASCADE,
-    CONSTRAINT fk_banks_users_users
-        FOREIGN KEY (username)
-        REFERENCES users (username)
-        ON DELETE CASCADE
-);
 
 CREATE TABLE accounts (
     account_id SERIAL PRIMARY KEY,
@@ -33,14 +14,10 @@ CREATE TABLE accounts (
     account_owner TEXT NOT NULL,
     account_type TEXT,
     account_last_four INT,
-    bank_id INT NOT NULL,
+    translator JSON NOT NULL,
     CONSTRAINT fk_accounts_users
         FOREIGN KEY (account_owner)
         REFERENCES users (username)
-        ON DELETE CASCADE,
-    CONSTRAINT fk_accounts_banks
-        FOREIGN KEY (bank_id)
-        REFERENCES banks (bank_id)
         ON DELETE CASCADE
 );
 

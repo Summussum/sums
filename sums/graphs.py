@@ -8,11 +8,11 @@ import plotly
 
 
 
-def return_pie():
+def return_pie(username):
     labels = []
     amounts = []
     total = 0
-    budgets = Budgets.objects.all()
+    budgets = Budgets.objects.filter(username=username)
     for object in budgets:
         labels.append(f"{object.category_display}: ${object.monthly_budget}")
         amounts.append(object.monthly_budget)

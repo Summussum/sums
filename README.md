@@ -4,11 +4,11 @@ As of 09/07/24, this application is a work in progress developed by Summussum, c
 
 This is an exploratory project to develop a personal finances application that manages budgets, tracks expenses, and offers various tools to guide financial decisions based on transaction history and current budget allocations.
 
-This project aims to provide a user friendly budgeting platform with tools specifically designed for individuals with limited income.
+This project aims to provide a user friendly budgeting platform with tools specifically designed for individuals with limited income and/or working towards paying off personal debt.
 
 If you are interested in this project please let me know! There are plans to host updates of this site in the future, so please check back in for a live url.
 
-NOTE: the demo site has no security guarantees and it is advised to not post any personal financial data to this site. If you feel the desire to test with actual data, there are sample datasets available online, such as: https://excelbianalytics.com/wp/downloads-20-sample-csv-files-data-sets-for-testing-till-2-million-records-bank-transactions/
+NOTE: the demo site has no security guarantees and it is advised to not post any personal financial data to this site until security features are fully implemented. If you feel the desire to test with actual data, there are sample datasets available online, such as: https://excelbianalytics.com/wp/downloads-20-sample-csv-files-data-sets-for-testing-till-2-million-records-bank-transactions/
 
 \
 ⠀

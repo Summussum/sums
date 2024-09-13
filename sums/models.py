@@ -30,31 +30,12 @@ class Accounts(models.Model):
     account_owner = models.ForeignKey('Users', models.DO_NOTHING, db_column='account_owner')
     account_type = models.TextField(blank=True, null=True)
     account_last_four = models.IntegerField(blank=True, null=True)
-    bank = models.ForeignKey('Banks', models.DO_NOTHING)
+    translator = models.JSONField()
 
     class Meta:
         managed = False
         db_table = 'accounts'
 
-
-class Banks(models.Model):
-    bank_id = models.AutoField(primary_key=True)
-    name = models.TextField()
-    fieldnames = models.TextField(blank=True, null=True)  # This field type is a guess.
-
-    class Meta:
-        managed = False
-        db_table = 'banks'
-
-
-class BanksUsers(models.Model):
-    username = models.OneToOneField('Users', models.DO_NOTHING, db_column='username', primary_key=True)  # The composite primary key (username, bank_id) found, that is not supported. The first column is selected.
-    bank = models.ForeignKey(Banks, models.DO_NOTHING)
-
-    class Meta:
-        managed = False
-        db_table = 'banks_users'
-        unique_together = (('username', 'bank'),)
 
 
 class Budgets(models.Model):

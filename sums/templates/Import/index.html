@@ -19,34 +19,15 @@
             <label for name="account">Choose upload account:</label>
             <select name="account">
                 <option value="new">New</option>
-                {% for nickname in nicknames %}
-                <option value="{{nickname}}">{{nickname}}</option>
+                {% for account in accounts %}
+                <option value="{{account.account_id}}">{{account.nickname}}</option>
                 {% endfor %}
             </select>
             <input type="submit" value="Submit">
         </form>
         <div id="upload_result"></div>
+        <div id="account_manager"></div>
 
-        <h3>Add New Account</h3><br>
-        <form>
-            <label for name="bank">Bank: </label>
-            <input type="text" name="bank" placeholder="Bank Name">
-            <label for name="account">Account: </label>
-            <input type="text" name="account" placeholder="Account Nickname">
-            <label for name="date_format">Date Format: </label>
-            <select name="date_format">
-                <option>yyyy-mm-dd</option>
-                <option>yy-mm-dd</option>
-                <option>mm-dd-yyyy</option>
-                <option>mm-dd-yy</option>
-                <option>dd-mm-yyyy</option>
-                <option>dd-mm-yy</option>
-                <option>yyyy-dd-mm</option>
-                <option>yy-dd-mm</option>
-            </select><br>
-            <button id="account_options" hx-get="/importer/account_options/" hx-target="#account_options" hx-swap="outerHTML">Advanced Options</button><br>
-            <input type="submit" value="Add Account">
-        </form>
 
     </div>
 

@@ -19,7 +19,7 @@ def create_budget_category(request):
     new_category_display = request.POST.get("category_display")
     new_category_name = slugify(new_category_display)
     amount = request.POST.get("amount")
-    if Budgets.objects.filter(category_name=new_category_name).exists():
+    if Budgets.objects.filter(category_name=new_category_name, username=user.username).exists():
         response = render(request, "Allocate/category_already_exists.html")
         response["HX-Retarget"] = "#error_message"
         return response
@@ -37,7 +37,7 @@ def display_active_budget(request):
     for object in Budgets.objects.filter(username=request.user.username):
         category_list.append(object)
     category_list = sorted(category_list, key=lambda x: x.category_name)
-    graph_div = return_pie()
+    graph_div = return_pie(request.user.username)
     context = {"category_list": category_list, "graph_div": graph_div}
     template = loader.get_template("Allocate/budget_display.html")
     return HttpResponse(template.render(context, request))

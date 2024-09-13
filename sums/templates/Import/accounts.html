@@ -1,0 +1,70 @@
+
+
+{% block add_account %}
+<div id="account_manager">
+    <h3>Add New Account</h3><br>
+    <table id="translator" class="centered">
+        <thead>
+        {% for slug in slugs %}
+            <th>
+                <label for name="{{slug}}">{{slug}}</label>
+            </th>
+        {% endfor %}
+        </thead>
+        <tr>
+        {% for slug in slugs %}
+        <td>
+            <select name="{{slug}}">
+                <option>--None--</option>
+                <option>Amount</option>
+                <option>Date</option>
+                <option>Description</option>
+                <option>Deposits(optional)</option>
+                <option>Addtl Info</option>
+            </select>
+        </td>
+        {% endfor %}
+        </tr>
+    </table>
+</div>
+
+<br>
+
+
+
+
+<form>
+    <input type="hidden" value="{{files}}" name="files">
+    <label for name="bank">Bank: </label>
+    <input type="text" name="bank" placeholder="Bank Name">
+    <label for name="account">Account: </label>
+    <input type="text" name="account" placeholder="Account Nickname">
+    <label for name="date_format">Date Format: </label>
+    <select name="date_format">
+        <option>yyyy-mm-dd</option>
+        <option>yy-mm-dd</option>
+        <option>mm-dd-yyyy</option>
+        <option>mm-dd-yy</option>
+        <option>dd-mm-yyyy</option>
+        <option>dd-mm-yy</option>
+        <option>yyyy-dd-mm</option>
+        <option>yy-dd-mm</option>
+    </select><br>
+    <button id="account_options" hx-get="/importer/account_options/" hx-target="#account_options" hx-swap="outerHTML">Advanced Options</button><br>
+    <button type="submit" hx-include="#account_manager" hx-post="/importer/formatted" hx-target>Submit</button>
+</form>
+<p>{{ first_line }}</p>
+
+{% endblock %}
+
+
+{% block account_options %}
+
+<div id="account_options">
+    <label for name="account_type">Account Type: </label>
+    <input type="text" name="account_type" placeholder="Checking/Savings/Credit">
+    <label for name="account_last_four">Account Number (last 4 digits):</label>
+    <input type="text" name="account_last_four" maxlength="4" placeholder="0000">
+</div>
+
+{% endblock %}
