@@ -10,11 +10,13 @@ CREATE TABLE users (
 
 CREATE TABLE accounts (
     account_id SERIAL PRIMARY KEY,
-    nickname TEXT,
+    nickname TEXT NOT NULL,
     account_owner TEXT NOT NULL,
+    bank TEXT NOT NULL,
     account_type TEXT,
     account_last_four INT,
     translator JSON NOT NULL,
+    date_formatter TEXT NOT NULL,
     CONSTRAINT fk_accounts_users
         FOREIGN KEY (account_owner)
         REFERENCES users (username)

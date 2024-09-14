@@ -3,59 +3,107 @@
 {% block add_account %}
 <div id="account_manager">
     <h3>Add New Account</h3><br>
+    <p>Fill out the form below to direct Sum's Import how to read files from this bank account. Your preferences will be saved and can be selected for future files.</p>
+    <p>If needed, please compare column names to the sample entry from your file displayed below.</p>
     <table id="translator" class="centered">
         <thead>
-        {% for slug in slugs %}
-            <th>
-                <label for name="{{slug}}">{{slug}}</label>
-            </th>
-        {% endfor %}
+            <th><label for name="transaction_date">Date</label></th>
+            <th><label for name="amount">Expenses</label></th>
+            <th><label for name="transaction_description">Description</label></th>
+            <th><label for name="deposits">Deposits(optional)</label></th>
+            <th><label for name="additional">Additional Info(optional)</label></th>
         </thead>
         <tr>
-        {% for slug in slugs %}
-        <td>
-            <select name="{{slug}}">
-                <option>--None--</option>
-                <option>Amount</option>
-                <option>Date</option>
-                <option>Description</option>
-                <option>Deposits(optional)</option>
-                <option>Addtl Info</option>
-            </select>
-        </td>
-        {% endfor %}
+            <td>
+                <select name="transaction_date">
+                    <option value="None">--None--</option>
+                    {% for slug in first_line %}
+                    <option value="{{slug}}">{{slug}}</option>
+                    {% endfor %}
+                </select>
+            </td>
+            <td>
+                <select name="amount">
+                    <option value="None">--None--</option>
+                    {% for slug in first_line %}
+                    <option value="{{slug}}">{{slug}}</option>
+                    {% endfor %}
+                </select>
+            </td>
+            <td>
+                <select name="transaction_description">
+                    <option value="None">--None--</option>
+                    {% for slug in first_line %}
+                    <option value="{{slug}}">{{slug}}</option>
+                    {% endfor %}
+                </select>
+            </td>
+            <td>
+                <select name="deposits">
+                    <option value="None">--None--</option>
+                    {% for slug in first_line %}
+                    <option value="{{slug}}">{{slug}}</option>
+                    {% endfor %}
+                </select>
+            </td>
+            <td>
+                <select name="additional">
+                    <option value="None">--None--</option>
+                    {% for slug in first_line %}
+                    <option value="{{slug}}">{{slug}}</option>
+                    {% endfor %}
+                </select>
+            </td>
         </tr>
     </table>
+
+
+    <br>
+        <label for name="bank">Bank: </label>
+        <input type="text" name="bank" placeholder="Bank Name">
+        <label for name="nickname">Account: </label>
+        <input type="text" name="nickname" placeholder="Account Nickname">
+        <label for name="date_format">Date Format: </label>
+        <select name="date_format">
+            <option value="%Y-%m-%d">yyyy-mm-dd (2020-01-31)</option>
+            <option value="%y-%m-%d">yy-mm-dd (20-01-31)</option>
+            <option value="%m-%d-%Y">mm-dd-yyyy (01-31-2020)</option>
+            <option value="%m-%d-%y">mm-dd-yy (01-31-20)</option>
+            <option value="%d-%m-%Y">dd-mm-yyyy (31-01-2020)</option>
+            <option value="%d-%m-%y">dd-mm-yy (31-01-20)</option>
+            <option value="%Y-%d-%m">yyyy-dd-mm (2020-31-01)</option>
+            <option value="%y-%d-%m">yy-dd-mm (20-31-01)</option>
+            <option value="%Y-%b-%d">yyyy-M-dd (2020-Jan-31)</option>
+            <option value="%y-%b-%d">yy-M-dd (20-Jan-31)</option>
+            <option value="%b-%d-%Y">M-dd-yyyy (Jan-31-2020)</option>
+            <option value="%b-%d-%y">M-dd-yy (Jan-31-20)</option>
+            <option value="%d-%b-%Y">dd-M-yyyy (31-Jan-2020)</option>
+            <option value="%d-%b-%y">dd-M-yy (31-Jan-20)</option>
+            <option value="%Y-%d-%b">yyyy-dd-M (2020-31-Jan)</option>
+            <option value="%y-%d-%b">yy-dd-M (20-31-Jan)</option>
+
+        </select><br>
+        <button id="account_options" hx-get="/importer/account_options/" hx-target="#account_options" hx-swap="outerHTML">Advanced Options</button><br>
+        <button type="submit" hx-include="#account_manager" hx-post="/importer/new_account/" hx-target>Submit</button>
 </div>
 
-<br>
 
-
-
-
-<form>
-    <input type="hidden" value="{{files}}" name="files">
-    <label for name="bank">Bank: </label>
-    <input type="text" name="bank" placeholder="Bank Name">
-    <label for name="account">Account: </label>
-    <input type="text" name="account" placeholder="Account Nickname">
-    <label for name="date_format">Date Format: </label>
-    <select name="date_format">
-        <option>yyyy-mm-dd</option>
-        <option>yy-mm-dd</option>
-        <option>mm-dd-yyyy</option>
-        <option>mm-dd-yy</option>
-        <option>dd-mm-yyyy</option>
-        <option>dd-mm-yy</option>
-        <option>yyyy-dd-mm</option>
-        <option>yy-dd-mm</option>
-    </select><br>
-    <button id="account_options" hx-get="/importer/account_options/" hx-target="#account_options" hx-swap="outerHTML">Advanced Options</button><br>
-    <button type="submit" hx-include="#account_manager" hx-post="/importer/formatted" hx-target>Submit</button>
-</form>
-<p>{{ first_line }}</p>
-
+<p>Sample entry:</p>
+<table>
+    <thead>
+        {% for slug in slugs %}
+        <th>{{slug}}</th>
+        {% endfor %}
+    </thead>
+    <tr>
+        {% for text in sample_line %}
+        <td>{{text}}</td>
+        {% endfor %}
+    </tr>
+</table>
 {% endblock %}
+
+
 
 
 {% block account_options %}

@@ -26,11 +26,13 @@ class Users(models.Model):
 
 class Accounts(models.Model):
     account_id = models.AutoField(primary_key=True)
-    nickname = models.TextField(blank=True, null=True)
+    nickname = models.TextField()
+    bank = models.TextField()
     account_owner = models.ForeignKey('Users', models.DO_NOTHING, db_column='account_owner')
     account_type = models.TextField(blank=True, null=True)
     account_last_four = models.IntegerField(blank=True, null=True)
     translator = models.JSONField()
+    date_formatter = models.TextField()
 
     class Meta:
         managed = False
