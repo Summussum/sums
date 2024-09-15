@@ -14,7 +14,7 @@ import json
 @login_required
 def index(request):
     try:
-        accounts = Accounts.objects.get(account_owner=request.user.username)
+        accounts = Accounts.objects.filter(account_owner=request.user.username)
     except:
         accounts = []
     return render(request, "Import/index.html", context={"accounts": accounts})
@@ -28,12 +28,11 @@ def csv_file_upload(request):
         if ".csv" in filename:
             files.append(file.read().decode("utf-8"))
             request.session["filename"] = file.name
-            request.session["csv_files"] = files
         else:
             html = render_block_to_string("Import/partials.html", "failed", request=request)
             return HttpResponse(html)
     request.session["csv_files"] = files
-    if request.POST.get("account") == "new":
+    if request.POST.get("nickname") == "new":
         first_line = files[0].split("\n")[0].split(",")
         sample_line = files[0].split("\n")[1].split(",")
         first_slugs = [slugify(header) for header in first_line]
@@ -70,10 +69,10 @@ def make_new_account(request):
     
 @login_required
 def csv_file_save(request):
-    nickname = request.POST.get("nickname")
-    account = Accounts.objects.get(account_owner=request.user.username, nickname=nickname)
+    account_nickname = request.POST.get("nickname")
+    account = Accounts.objects.get(account_owner=request.user.username, nickname=account_nickname)
     translator = account.translator
-    date_format = Accounts.objects.get(account_owner=request.user.username, nickname=nickname).date_formatter
+    date_format = account.date_formatter
     files = request.session["csv_files"]
     if files:
         for f in files:

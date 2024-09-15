@@ -16,11 +16,11 @@
             <!-- insert a selector for bank fieldnames here -->
             <label for name="load_file">Choose a file to upload:</label><br>
             <input type="file" name="load_file" id="load_file"><br>
-            <label for name="account">Choose upload account:</label>
-            <select name="account">
+            <label for name="nickname">Choose upload account:</label>
+            <select name="nickname">
                 <option value="new">New</option>
                 {% for account in accounts %}
-                <option value="{{account.account_id}}">{{account.nickname}}</option>
+                <option value="{{account.nickname}}">{{account.nickname}}</option>
                 {% endfor %}
             </select>
             <input type="submit" value="Submit">
