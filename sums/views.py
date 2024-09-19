@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.template import loader
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from . import models
 from render_block import render_block_to_string
@@ -61,3 +61,7 @@ def sums_register_submit(request):
     else:
         html = render_block_to_string("Login/welcome_text.html", "nonregistered")
     return HttpResponse(html)
+
+def sums_logout(request):
+    logout(request)
+    return redirect("/")
