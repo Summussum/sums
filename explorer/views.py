@@ -6,7 +6,9 @@ from django.contrib.auth.decorators import login_required
 # Create your views here.
 @login_required
 def index(request):
-    return render(request, "Explore/index.html")
+    response = render(request, "Explore/index.html")
+    response["HX-Push-Url"] = request.path
+    return response
 
 @login_required
 def query_records(request):

@@ -11,7 +11,9 @@ from django.template.defaultfilters import slugify
 # Create your views here.
 @login_required
 def index(request):
-    return render(request, "Allocate/index.html")
+    response = render(request, "Allocate/index.html")
+    response["HX-Push-Url"] = request.path
+    return response
 
 @login_required
 def create_budget_category(request):

@@ -17,7 +17,10 @@ def index(request):
         accounts = Accounts.objects.filter(account_owner=request.user.username)
     except:
         accounts = []
-    return render(request, "Import/index.html", context={"accounts": accounts})
+    response = render(request, "Import/index.html", context={"accounts": accounts})
+    response["HX-Push-Url"] = request.path
+    return response
+
 
 @login_required
 def csv_file_upload(request):

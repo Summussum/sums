@@ -18,7 +18,9 @@ def sums_index(request):
         context = {"username": request.user.username}
     else:
         context = {"username": "anonymous user"}
-    return render(request, "dashboard.html", context=context)
+    response = render(request, "dashboard.html", context=context)
+    response["HX-Push-Url"] = request.path
+    return response
 
 def sums_entrypoint(request):
     return render(request, "Login/index.html")
