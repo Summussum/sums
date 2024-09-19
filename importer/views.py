@@ -83,8 +83,11 @@ def csv_file_save(request):
             for line in file.record:
                 entry = Transactions(amount=line["amount"], transaction_date=datetime.strptime(line["transaction_date"], date_format).isoformat()[:10], transaction_description=line["transaction_description"])
                 entry.save()
-
-    context = {"filename": request.session["filename"]}
+    if request.path == "/importer/new_account/":
+        accounts = [account]
+    else:
+        accounts = []
+    context = {"filename": request.session["filename"], "accounts": accounts}
     html = render_block_to_string("Import/partials.html", "success", context=context, request=request)
     return HttpResponse(html)
     

@@ -1,6 +1,12 @@
 {% block success %}
-<div id="upload_result">Your file, {{ filename }}, has been successfully imported!</div>
-
+    <div id="upload_result">Your file, {{ filename }}, has been successfully imported!</div>
+    
+    {% for account in accounts %}
+    <div hx-swap-oob="beforeend:#account_selector">
+        <option value="{{account.nickname}}">{{account.nickname}}</option>
+    </div>
+    {% endfor %}
+    
 {% endblock %}
 
 

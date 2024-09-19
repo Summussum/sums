@@ -17,7 +17,7 @@
             <label for name="load_file">Choose a file to upload:</label><br>
             <input type="file" name="load_file" id="load_file"><br>
             <label for name="nickname">Choose upload account:</label>
-            <select name="nickname">
+            <select name="nickname" id="account_selector">
                 <option value="new">New</option>
                 {% for account in accounts %}
                 <option value="{{account.nickname}}">{{account.nickname}}</option>
