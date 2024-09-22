@@ -41,10 +41,15 @@ CREATE TABLE transactions (
     amount NUMERIC NOT NULL,
     transaction_date DATE NOT NULL,
     transaction_description TEXT,
-    account_id INT,
     budget_id INT,
     note TEXT,
-    recurring BOOLEAN
+    account_owner TEXT NOT NULL,
+    recurring BOOLEAN,
+    account_nickname TEXT NOT NULL,
+    CONSTRAINT fk_transactions_users
+        FOREIGN KEY (account_owner)
+        REFERENCES users (username)
+        ON DELETE CASCADE
 );
 
 INSERT INTO users (username, passwd, email) VALUES ('test', 'admin123', 'testing@testing.com');

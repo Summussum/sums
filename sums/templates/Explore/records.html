@@ -19,30 +19,32 @@
 
 
         <table>
-                <caption>Records</caption>
+                <caption>RECORDS</caption>
                 <thead>
                         <tr>
+                                <th>Edit all?</th>
                                 <th>Date</th>
                                 <th>Budget</th>
                                 <th>Amount</th>
                                 <th>Description</th>
+                                <th>Account</th>
                                 <th>Recurring</th>
                                 <th>Note</th>
 
                         </tr>
                         {% for record in records %}
-                        <tr>
-                                <td>{{ record[date] }}</td>
-                                <td>{{ record[budget_select] }}</td>
-                                <td>{{ record[amount] }}</td>
-                                <td>{{ record[description] }}</td>
-                                <td>{{ record[recurring] }}</td>
-                                <td>{{ record[note] }}</td>
+                        <tr id="record_{{ record.transaction_id}}">
+                                <td><button hx-get="/explorer/record/{{record.transaction_id}}" hx-target="#record_{{ record.transaction_id}}" hx-swap="outerHTML">Edit</button></td>
+                                <td>{{ record.transaction_date }}</td>
+                                <td>{{ budget_select }}</td>
+                                <td>{{ record.amount }}</td>
+                                <td>{{ record.transaction_description }}</td>
+                                <td>{{ record.account_nickname }}</td>
+                                <td>{{ record.recurring }}</td>
+                                <td>{{ record.note }}</td>
                         </tr>
+                        {% endfor %}
                 </thead>
-
-
-
         </table>
 
 

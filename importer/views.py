@@ -72,6 +72,8 @@ def make_new_account(request):
     
 @login_required
 def csv_file_save(request):
+    user = Users.objects.get(username=request.user.username)
+
     account_nickname = request.POST.get("nickname")
     account = Accounts.objects.get(account_owner=request.user.username, nickname=account_nickname)
     translator = account.translator
@@ -81,7 +83,7 @@ def csv_file_save(request):
         for f in files:
             file = csv_transform.Transformer(f, translator)
             for line in file.record:
-                entry = Transactions(amount=line["amount"], transaction_date=datetime.strptime(line["transaction_date"], date_format).isoformat()[:10], transaction_description=line["transaction_description"])
+                entry = Transactions(amount=line["amount"], transaction_date=datetime.strptime(line["transaction_date"], date_format).isoformat()[:10], transaction_description=line["transaction_description"], account_nickname=account.nickname, account_owner=user)
                 entry.save()
     if request.path == "/importer/new_account/":
         accounts = [account]

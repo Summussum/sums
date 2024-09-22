@@ -57,9 +57,12 @@ class Transactions(models.Model):
     amount = models.FloatField()
     transaction_date = models.DateField()
     transaction_description = models.TextField(blank=True, null=True)
+    budget_id = models.IntegerField(blank=True, null=True)
     note = models.TextField(blank=True, null=True)
     recurring = models.BooleanField(blank=True, null=True)
-
+    account_owner = models.ForeignKey('Users', models.DO_NOTHING, db_column='account_owner')
+    account_nickname = models.TextField()
+    
     class Meta:
         managed = False
         db_table = 'transactions'

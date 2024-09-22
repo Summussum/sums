@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
+from sums.models import Transactions
 
 
 
@@ -13,4 +14,7 @@ def index(request):
 @login_required
 def query_records(request):
     # category_name, category_display, date, budget_select(html selector with its own view), amount, description, recurring(checkbox), note(text edit, limit char display? except hover?)
-    pass
+    records = Transactions.objects.filter(account_owner=request.user.username)
+    response = render(request, "Explore/records.html", context={"records": records})
+    response["HX-Push-Url"] = request.path
+    return response
