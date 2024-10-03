@@ -34,9 +34,20 @@
                         </tr>
                         {% for record in records %}
                         <tr id="record_{{ record.transaction_id}}">
-                                <td><button hx-get="/explorer/record/{{record.transaction_id}}" hx-target="#record_{{ record.transaction_id}}" hx-swap="outerHTML">Edit</button></td>
+                                <td><button
+                                        hx-post="/explorer/record/{{ record.transaction_id }}"
+                                        hx-target="#record_{{ record.transaction_id }}"
+                                        hx-swap="outerHTML"
+                                        hx-include="#record_{{ record.transaction_id}}"
+                                        >Save
+                                </button></td>
                                 <td>{{ record.transaction_date }}</td>
-                                <td>{{ budget_select }}</td>
+                                <td>
+                                        <select name="budget_selector">
+                                                <option value="{{record.budget_id}}">{{record.category_display}}</option>
+                                                {{ budget_select }}
+                                        </select>
+                                </td>
                                 <td>{{ record.amount }}</td>
                                 <td>{{ record.transaction_description }}</td>
                                 <td>{{ record.account_nickname }}</td>

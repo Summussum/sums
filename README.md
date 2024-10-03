@@ -1,6 +1,6 @@
 # Sum's Sums
 
-As of 09/19/24, this application is a work in progress developed by Summussum, correlating to the repository: github.com/Summussum/sums.
+As of 10/03/24, this application is a work in progress developed by Summussum, correlating to the repository: github.com/Summussum/sums.
 
 This is an exploratory project to develop a personal finances application that manages budgets, tracks expenses, and offers various tools to guide financial decisions based on transaction history and current budget allocations.
 

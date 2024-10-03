@@ -1,0 +1,30 @@
+{% block budget_select %}
+
+    {% for budget in budgets %}
+    <option value="{{budget.budget_id}}">{{budget.category_display}}</option>
+    {% endfor %}
+
+
+{% endblock %}
+
+
+
+
+{% block record %}
+<tr id="record_{{ record.transaction_id}}">
+    <td><button hx-post="/explorer/record/{{ record.transaction_id }}" hx-target="#record_{{ record.transaction_id }}" hx-swap="outerHTML" hx-include="#record_{{ record.transaction_id}}">Save</button></td>
+    <td>{{ record.transaction_date }}</td>
+    <td>
+            <select name="budget_selector">
+                    <option value="{{record.budget_id}}">{{category_name}}</option>
+                    {{ budget_select }}
+            </select>
+    </td>
+    <td>{{ record.amount }}</td>
+    <td>{{ record.transaction_description }}</td>
+    <td>{{ record.account_nickname }}</td>
+    <td>{{ record.recurring }}</td>
+    <td>{{ record.note }}</td>
+</tr>
+
+{% endblock %}
