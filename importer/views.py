@@ -81,9 +81,9 @@ def csv_file_save(request):
     files = request.session["csv_files"]
     if files:
         for f in files:
-            file = csv_transform.Transformer(f, translator)
+            file = csv_transform.Transformer(f, translator, date_format)
             for line in file.record:
-                entry = Transactions(amount=line["amount"], transaction_date=datetime.strptime(line["transaction_date"], date_format).isoformat()[:10], transaction_description=line["transaction_description"], account_nickname=account.nickname, account_owner=user)
+                entry = Transactions(amount=line["amount"], transaction_date=line["transaction_date"], transaction_description=line["transaction_description"], account_nickname=account.nickname, account_owner=user)
                 entry.save()
     if request.path == "/importer/new_account/":
         accounts = [account]

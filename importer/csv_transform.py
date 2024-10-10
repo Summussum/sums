@@ -1,5 +1,6 @@
-import csv
+import csv, datetime
 from django import forms
+from dateutil.parser import parse
 
 class UploadFileForm(forms.Form):
     title = forms.CharField()
@@ -7,12 +8,14 @@ class UploadFileForm(forms.Form):
 
 
 class Transformer():
-    def __init__(self, file, translator: dict):
+    def __init__(self, file, translator: dict, date_format: str):
         self.new_entry = []
         self.fieldnames = list(translator.keys())
         self.translator = translator
         self.file = file
         self.record = self.generate_record()
+        self.date_format = date_format
+        self.format_dates()
         
     
     def generate_record(self):
@@ -24,6 +27,14 @@ class Transformer():
             entry = dict([(fieldname, line[self.translator[fieldname]]) for fieldname in self.fieldnames])
             record_list.append(entry)
         return record_list
+    
+    def format_dates(self):
+        if self.date_format == "automatic":
+            for line in self.record:
+                line["transaction_date"] = parse(line["transaction_date"]).isoformat()[:10]
+        else:
+            for line in self.record:
+                line["transaction_date"] = datetime.strptime(line["transaction_date"], self.date_format).isoformat()[:10]
 
 
 
