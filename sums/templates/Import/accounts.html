@@ -9,6 +9,7 @@
         <thead>
             <th><label for name="transaction_date">Date</label></th>
             <th><label for name="amount">Expenses</label></th>
+            <th><label for name="neg_bool">Negative Expenses?</label></th>
             <th><label for name="transaction_description">Description</label></th>
             <th><label for name="deposits">Deposits(optional)</label></th>
             <th><label for name="additional">Additional Info(optional)</label></th>
@@ -29,6 +30,9 @@
                     <option value="{{slug}}">{{slug}}</option>
                     {% endfor %}
                 </select>
+            </td>
+            <td>
+                <input type="checkbox" name="neg_bool" checked>
             </td>
             <td>
                 <select name="transaction_description">
@@ -89,18 +93,21 @@
 </div>
 
 
-<p>Sample entry:</p>
+<h3>Sample entries</h3>
+<p>Below is a reduced display of your uploaded document. Please confirm your document's headers are correctly identified above.</p>
 <table>
     <thead>
         {% for slug in slugs %}
         <th>{{slug}}</th>
         {% endfor %}
     </thead>
+    {% for sample_line in sample_lines %}
     <tr>
         {% for text in sample_line %}
         <td>{{text}}</td>
         {% endfor %}
     </tr>
+    {% endfor %}
 </table>
 {% endblock %}
 

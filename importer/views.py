@@ -37,9 +37,9 @@ def csv_file_upload(request):
     request.session["csv_files"] = files
     if request.POST.get("nickname") == "new":
         first_line = files[0].split("\n")[0].split(",")
-        sample_line = files[0].split("\n")[1].split(",")
+        sample_lines = [line.split(",") for line in files[0].split("\n")[1:32:6]]
         first_slugs = [slugify(header) for header in first_line]
-        html = render_block_to_string("Import/accounts.html", "add_account", request=request, context={"first_line": first_line, "slugs": first_slugs, "sample_line": sample_line})
+        html = render_block_to_string("Import/accounts.html", "add_account", request=request, context={"first_line": first_line, "slugs": first_slugs, "sample_lines": sample_lines})
         return HttpResponse(html) 
     else:
         return csv_file_save(request)
@@ -54,6 +54,10 @@ def make_new_account(request):
         "deposits": request.POST.get("deposits"),
         "notes": request.POST.get("additional")
         }
+    if request.POST.get("neg_bool") == "on":
+        negative_expenses_bool = True
+    else:
+        negative_expenses_bool = False
     new_account = Accounts(
         nickname = request.POST.get("nickname"),
         bank = request.POST.get("bank"),
@@ -61,7 +65,8 @@ def make_new_account(request):
         account_type = request.POST.get("account_type"),
         account_last_four = request.POST.get("account_last_four"),
         translator = json.dumps(new_translator),
-        date_formatter = request.POST.get("date_format")
+        date_formatter = request.POST.get("date_format"),
+        negative_expenses = negative_expenses_bool
     )
     new_account.save()
     return csv_file_save(request)
