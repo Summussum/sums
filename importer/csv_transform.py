@@ -1,4 +1,5 @@
-import csv, datetime
+import csv
+from datetime import datetime
 from django import forms
 from dateutil.parser import parse
 
