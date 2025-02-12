@@ -32,7 +32,6 @@ class Accounts(models.Model):
     account_last_four = models.IntegerField(blank=True, null=True)
     translator = models.JSONField()
     date_formatter = models.TextField()
-    negative_expenses = models.BooleanField()
 
     class Meta:
         managed = False

@@ -17,6 +17,7 @@ class Transformer():
         self.record = self.generate_record()
         self.date_format = date_format
         self.format_dates()
+        self.format_amounts()
         
     
     def generate_record(self):
@@ -37,6 +38,11 @@ class Transformer():
             for line in self.record:
                 line["transaction_date"] = datetime.strptime(line["transaction_date"], self.date_format).isoformat()[:10]
 
+    def format_amounts(self):
+        if "deposits" in self.fieldnames:
+            for line in self.record:
+                line["amount"] = -abs(float(line["amount"]))
+                line["amount"] += abs(float(line["deposits"]))
 
 
     def update_list(self, data):

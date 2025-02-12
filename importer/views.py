@@ -39,7 +39,18 @@ def csv_file_upload(request):
         first_line = files[0].split("\n")[0].split(",")
         sample_lines = [line.split(",") for line in files[0].split("\n")[1:32:6]]
         first_slugs = [slugify(header) for header in first_line]
-        html = render_block_to_string("Import/accounts.html", "add_account", request=request, context={"first_line": first_line, "slugs": first_slugs, "sample_lines": sample_lines})
+        auto_amount, auto_date, auto_description, auto_deposits = "", "", "", ""
+        for header in first_line[-1::-1]:
+            if any(keyword in header.lower() for keyword in ["withdraw", "expens", "amount", "debit"]):
+                auto_amount = f"<option value='{header}'>{header}</option>"
+            elif any(keyword in header.lower() for keyword in ["date"]):
+                auto_date = f"<option value='{header}'>{header}</option>"
+            elif any(keyword in header.lower() for keyword in ["descrip", "detail"]):
+                auto_description = f"<option value='{header}'>{header}</option>"
+            elif any(keyword in header.lower() for keyword in ["deposit", "credit"]):
+                auto_deposits = f"<option value='{header}'>{header}</option>"
+        context = {"first_line": first_line, "slugs": first_slugs, "sample_lines": sample_lines, "auto_amount": auto_amount, "auto_date": auto_date, "auto_description": auto_description, "auto_deposits": auto_deposits}
+        html = render_block_to_string("Import/accounts.html", "add_account", request=request, context=context)
         return HttpResponse(html) 
     else:
         return csv_file_save(request)
@@ -54,10 +65,12 @@ def make_new_account(request):
         "deposits": request.POST.get("deposits"),
         "notes": request.POST.get("additional")
         }
-    if request.POST.get("neg_bool") == "on":
-        negative_expenses_bool = True
-    else:
-        negative_expenses_bool = False
+    pop_list = []
+    for key in new_translator:
+        if new_translator[key] == "None":
+            pop_list.append(key)
+    for item in pop_list:
+        new_translator.pop(item)
     new_account = Accounts(
         nickname = request.POST.get("nickname"),
         bank = request.POST.get("bank"),
@@ -66,7 +79,6 @@ def make_new_account(request):
         account_last_four = request.POST.get("account_last_four"),
         translator = json.dumps(new_translator),
         date_formatter = request.POST.get("date_format"),
-        negative_expenses = negative_expenses_bool
     )
     new_account.save()
     return csv_file_save(request)

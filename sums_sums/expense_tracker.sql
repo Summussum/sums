@@ -17,7 +17,6 @@ CREATE TABLE accounts (
     account_last_four INT,
     translator JSON NOT NULL,
     date_formatter TEXT NOT NULL,
-    negative_expenses BOOLEAN NOT NULL,
     CONSTRAINT fk_accounts_users
         FOREIGN KEY (account_owner)
         REFERENCES users (username)
