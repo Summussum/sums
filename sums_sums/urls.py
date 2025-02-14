@@ -24,4 +24,5 @@ urlpatterns = [
     path('allocator/', include("allocator.urls")),
     path('explorer/', include("explorer.urls")),
     path('importer/', include("importer.urls")),
+    path('chronicler/', include("chronicler.urls"))
 ]

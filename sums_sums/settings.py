@@ -44,7 +44,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_htmx',
     'sums',
-    'allocator'
+    'allocator',
+    'chronicler',
+    'importer',
+    'explorer'
 ]
 
 MIDDLEWARE = [
