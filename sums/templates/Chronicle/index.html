@@ -9,26 +9,14 @@
 <body id="content">
     
     <div class="centered">
-        <h3 class="welcome-text" id="welcome_text">Welcome to Import!</h3>
+       {% for entry in unclassified %}
+            <p>{{entry.amount}}   {{entry.transaction_description}}</p>
+       {% endfor %}
 
-        <form hx-post="/importer/file_upload/" hx-target="#upload_result" method="post" hx-encoding="multipart/form-data" enctype="multipart/form-data">
-            {% csrf_token %}
-            <!-- insert a selector for bank fieldnames here -->
-            <label for name="load_file">Choose a file to upload:</label><br>
-            <input type="file" name="load_file" id="load_file"><br>
-            <label for name="nickname">Choose upload account:</label>
-            <select name="nickname" id="account_selector">
-                <option value="new">New</option>
-                {% for account in accounts %}
-                <option value="{{account.nickname}}">{{account.nickname}}</option>
-                {% endfor %}
-            </select>
-            <input type="submit" value="Submit">
-        </form>
-        <div id="upload_result"></div>
-        <div id="account_manager"></div>
-
-
+    <br>
+       {% for option in options %}
+        <button value="{{option.category_name}}">{{option.category_display}}</button>
+       {% endfor %}
     </div>
 
 
