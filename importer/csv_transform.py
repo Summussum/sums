@@ -41,8 +41,8 @@ class Transformer():
     def format_amounts(self):
         if "deposits" in self.fieldnames:
             for line in self.record:
-                line["amount"] = -abs(float(line["amount"]))
-                line["amount"] += abs(float(line["deposits"]))
+                line["amount"] = -abs(float(line["amount"].replace(",", "")))
+                line["amount"] += abs(float(line["deposits"].replace(",", "")))
 
 
     def update_list(self, data):
