@@ -10,10 +10,12 @@
             h1 {text-align: center;}
             h2 {text-align: center; font-size:18px;}
             .centered {text-align: center;}
+            .center_table {border: 1px solid; margin: 0px auto; border-collapse: collapse;}
+            .center_table td, th {border: 1px solid}
         </style>
     </head>
 <h2>Navigation:
-    <select hx-on:change="htmx.ajax('GET', this.options[this.selectedIndex].dataset.url, '#content')" style="align-self:center">
+    <select hx-on:change="htmx.ajax('GET', this.options[this.selectedIndex].dataset.url, '#content')" hx-push-url="true" style="align-self:center">
         {% block page_select %}{% endblock page_select %}
         <option data-url="/">Dashboard</option>
         <option data-url="/allocator/">Allocate: Manage Budgets</option>

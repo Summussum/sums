@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block page_select %}
+<option data-url="/chronicler/">--Chronicle--</option>
+{% endblock page_select %}
+
+
+{% block content %}
+<body id="content">
+    
+   <div class="centered" id="chronicle">
+     <h3>There are no more uncategorized transactions. Congratulations!</h3>
+     <br>
+     <p>If you wish to review current transactions, please check the <a href="/explorer/">Explorer</a> page.</p>
+   </div>
+
+
+
+</body>
+{% endblock content %}

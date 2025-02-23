@@ -1,23 +1,43 @@
 {% extends 'base.html' %}
 
 {% block page_select %}
-<option data-url="/chronicle/">--Chronicle--</option>
+<option data-url="/chronicler/">--Chronicle--</option>
 {% endblock page_select %}
 
 
 {% block content %}
 <body id="content">
     
-    <div class="centered">
-       {% for entry in unclassified %}
-            <p>{{entry.amount}}   {{entry.transaction_description}}</p>
-       {% endfor %}
+   <div class="centered" id="chronicle">
+      <table class="center_table">
+         <tr>
+            <th>Date</th>
+            <th>Amount</th>
+            <th>Description</th>
+            <th>Account</th>
+            <th>Recurring</th>
+            <th>Note</th>
+            <th>Category</th>
+         </tr>
+         <tr id="chronicle_target">
+            <td>{{target.transaction_date}}</td>
+            <td>{{target.amount}}</td>
+            <td>{{target.transaction_description}}</td>
+            <td>{{target.recurring}}</td>
+            <td>{{target.note}}</td>
+            <td>{{target.budget_id}}</td>
+         </tr>
+      </table>
 
-    <br>
-       {% for option in options %}
-        <button value="{{option.category_name}}">{{option.category_display}}</button>
-       {% endfor %}
-    </div>
+   <br>
+      {% for option in options %}
+         <button
+            hx-post="/chronicler/assign/"
+            hx-target="#chronicle"
+            value="{{option.category_name}}"
+            name="category_name">{{option.category_display}}</button>
+      {% endfor %}
+   </div>
 
 
 </body>
