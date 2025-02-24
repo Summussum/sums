@@ -1,6 +1,6 @@
 # Sum's Sums
 
-As of 02/21/25, this application is a work in progress developed by Summussum, correlating to the repository: github.com/Summussum/sums.
+As of 02/24/25, this application is a work in progress developed by Summussum, correlating to the repository: github.com/Summussum/sums.
 
 This is an exploratory project to develop a personal finances application that manages budgets, tracks expenses, and offers various tools to guide financial decisions based on transaction history and current budget allocations.
 
@@ -34,7 +34,7 @@ NOTE: In order to run Docker Compose, please first add the following file in the
       POSTGRES_PORT=<your postgres port> # set to '5432'
       SECRET_KEY=<your secret key> # django defaults to 50 random characters
 
-
+For your convenience, a sample environment file has been provided in the correct location. Please change the file name from "env.txt" to ".env" to use this file. Please change credentials as needed for better security.
 \
 \
 \

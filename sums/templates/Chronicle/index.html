@@ -9,35 +9,67 @@
 <body id="content">
     
    <div class="centered" id="chronicle">
-      <table class="center_table">
-         <tr>
-            <th>Date</th>
-            <th>Amount</th>
-            <th>Description</th>
-            <th>Account</th>
-            <th>Recurring</th>
-            <th>Note</th>
-            <th>Category</th>
-         </tr>
-         <tr id="chronicle_target">
-            <td>{{target.transaction_date}}</td>
-            <td>{{target.amount}}</td>
-            <td>{{target.transaction_description}}</td>
-            <td>{{target.recurring}}</td>
-            <td>{{target.note}}</td>
-            <td>{{target.budget_id}}</td>
-         </tr>
-      </table>
+        <h3 class="centered">Chronicle</h3>
+        <p>Select a budget category below to assign the following entry:</p>
+        <table class="center_table">
+            <tr>
+                <th>Date</th>
+                <th>Amount</th>
+                <th>Description</th>
+                <th>Account</th>
+                <th>Recurring</th>
+                <th>Note</th>
+                <th>Category</th>
+            </tr>
+            <tr id="chronicle_target">
+                <td>{{target.transaction_date}}</td>
+                <td>{{target.amount}}</td>
+                <td>{{target.transaction_description}}</td>
+                <td>{{target.recurring}}</td>
+                <td>{{target.note}}</td>
+                <td>{{target.budget_id}}</td>
+            </tr>
+        </table>
 
-   <br>
-      {% for option in options %}
-         <button
-            hx-post="/chronicler/assign/"
-            hx-target="#chronicle"
-            value="{{option.category_name}}"
-            name="category_name">{{option.category_display}}</button>
-      {% endfor %}
-   </div>
+        <br>
+        {% for option in options %}
+            <button
+                hx-post="/chronicler/assign/"
+                hx-target="#chronicle"
+                value="{{option.category_name}}"
+                name="category_name"
+            >{{option.category_display}}</button>
+        {% endfor %}
+        <br>
+        <h3 class="centered">Chronicle History</h3>
+        <table class="center_table">
+            <tr>
+                <th>Date</th>
+                <th>Amount</th>
+                <th>Description</th>
+                <th>Account</th>
+                <th>Recurring</th>
+                <th>Note</th>
+                <th>Category</th>
+            </tr>
+            {% for entry in chronicle_history %}
+                <tr id="{{entry.transaction_id}}">
+                    <td>{{entry.transaction_date}}</td>
+                    <td>{{entry.amount}}</td>
+                    <td>{{entry.transaction_description}}</td>
+                    <td>{{entry.account_nickname}}</td>
+                    <td>{{entry.recurring}}</td>
+                    <td>{{entry.note}}</td>
+                    <td>{{entry.budget_id}}</td>
+                </tr> 
+            {% empty %}
+            <tr>
+                <td colspan="7"><div class="centered">Nothing yet chronicled in the current session</div></td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
 
 
 </body>

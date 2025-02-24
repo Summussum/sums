@@ -16,6 +16,11 @@ import json
 @login_required
 def index(request):
     unclassified = Transactions.objects.filter(budget_id__isnull=True, account_owner=request.user.username).values()
+    if request.session.get("chronicle_recent"):
+        chronicle_history = request.session.get("chronicle_recent")[-1:-11:-1]
+    else:
+        request.session["chronicle_recent"] = []
+        chronicle_history = []
     if unclassified:
         budget_options = Budgets.objects.filter(username=request.user.username).values()
         chronicle_load = []
@@ -30,13 +35,12 @@ def index(request):
             if item['annual_budget'] is not None:
                 item['annual_budget'] = float(item['annual_budget'])
             options.append(item)
-        request.session["chronicle_recent"] = []
         request.session["unclassified"] = chronicle_load
         request.session["budget_options"] = options
         request, chronicle_target, options = new_target(request)
-        response = render(request, "Chronicle/index.html", context={"target":chronicle_target, "options":options})
+        response = render(request, "Chronicle/index.html", context={"target":chronicle_target, "options":options, "chronicle_history": chronicle_history})
     else:
-        response = render(request, "Chronicle/resolved.html", context={})
+        response = render(request, "Chronicle/resolved.html", context={"chronicle_history": chronicle_history})
     response["HX-Push-Url"] = request.path
     return response
 
