@@ -1,5 +1,7 @@
 {% block budget_select %}
 
+    <option value="None">None</option>
+
     {% for budget in budgets %}
     <option value="{{budget.budget_id}}">{{budget.category_display}}</option>
     {% endfor %}

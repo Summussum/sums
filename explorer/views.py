@@ -36,9 +36,15 @@ def query_records(request):
 @login_required
 def edit_record(request, transaction_id):
     record = Transactions.objects.get(transaction_id=transaction_id)
-    record.budget_id = request.POST.get("budget_selector")
+    budgets = Budgets.objects.filter(username=request.user.username)
+    if request.POST.get("budget_selector") == "None":
+        record.budget_id = None
+    else:
+        record.budget_id = request.POST.get("budget_selector")
     record.save()
-    category_name = Budgets.objects.get(username=request.username, budget_id=record.budget_id)
+    category_name = "None"
+    if record.budget_id:
+        category_name = Budgets.objects.get(username=request.user.username, budget_id=record.budget_id).category_display
     budget_select = render_block_to_string("Explore/partials.html", "budget_select", context={"budgets": budgets})
     html = render_block_to_string("Explore/partials.html", "record", context={"record": record, "budget_select": budget_select, "category_name": category_name})
     return HttpResponse(html)
