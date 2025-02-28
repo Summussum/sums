@@ -39,6 +39,8 @@
                 value="{{option.category_name}}"
                 name="category_name"
             >{{option.category_display}}</button>
+        {% empty %}
+        <p>No budgets were found. Please visit <a href="/allocator/">Allocate</a></p>
         {% endfor %}
         <br>
         <h3 class="centered">Chronicle History</h3>

@@ -4,6 +4,16 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="htmx-config"
+        content='{"responseHandling":[
+        {"code": "418", "swap": true},
+        {"code": "200", "swap": true},
+        {"code": "201", "swap": true},
+        {"code": "301", "swap": true},
+        {"code": "308", "swap": true},
+        {"code": "...", "swap": false}
+        ]}'
+        />
         <title>Sum's Sums</title>
         <script src="{% static 'htmx.min.js' %}" defer></script>
         <style>
@@ -22,7 +32,7 @@
         <option data-url="/explorer/">Explore: Review Records</option>
         <option data-url="/chronicler/">Chronicle: Assign Records</option>
         <option data-url="/importer/">Import: Bank Statements</option>
-        <option data-url="/importer/">Edit: Manual Records</option>
+        <option data-url="/explorer/graphs/">Edit: Manual Records</option>
     </select>
         <input type="button" hx-get="/logout/" style="justify-self:end" value="Logout" hx-target="body">
     </h2>
