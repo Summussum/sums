@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from render_block import render_block_to_string
 from django.contrib.auth.decorators import login_required
 from sums.models import Transactions, Budgets
+from http import HTTPStatus
 
 
 
@@ -48,4 +49,13 @@ def edit_record(request, transaction_id):
     budget_select = render_block_to_string("Explore/partials.html", "budget_select", context={"budgets": budgets})
     html = render_block_to_string("Explore/partials.html", "record", context={"record": record, "budget_select": budget_select, "category_name": category_name})
     return HttpResponse(html)
+
+
+def teapot(request):
+    return render(
+        request,
+        "Explore/teapot.html",
+        status=HTTPStatus.IM_A_TEAPOT,
+    )
+    
 

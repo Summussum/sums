@@ -21,8 +21,6 @@
         <div class="welcome-text" id="welcome_text">Welcome to this brand spanking new website dedicated to manage
             budgets and expenses!</div>
         <br><br>
-        <button hx-get="/login/login/" hx-target="#userform" hx-swap="outerHTML">Login</button>
-        <button hx-get="/login/register/" hx-target="#userform" hx-swap="outerHTML">Register</button>
         <div id="userform">Login:<br>
             <form hx-post="/login_submit/" hx-target="#welcome_text" hx-swap="outerHTML">
                 {% csrf_token %}
@@ -31,8 +29,9 @@
                 <label for name="password">Password:</label>
                 <input type="password" id="password" name="password"><br><br>
                 <input type="submit" value="Log In">
-
             </form>
+            <br><br>
+            <button hx-get="/login/register/" hx-target="#userform" hx-swap="outerHTML">Create new account</button>
         </div>
     </div>
 </body>
