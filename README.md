@@ -8,9 +8,9 @@ This project aims to provide a user friendly budgeting platform with tools speci
 
 If you are interested in this project please let me know! There are plans to host updates of this site in the future, so please check back in for a live url.
 
-UPDATE: Sum's Sums will be hosted on the url https://summussum.com with occasional interruptions as of March 2025. Please see NOTE below for safety recommendations.
+UPDATE: Sum's Sums will be hosted on the url https://summussum.com with occasional interruptions as of March 2025. **Please see NOTE below for safety recommendations**.
 
-NOTE: the demo site has no security guarantees and it is advised to not post any personal financial data to this site until security features are fully implemented. Summussum does not claim any responsibility for exposure of personal information submitted to this test site. If you feel the desire to test with actual data, there are sample datasets available online, such as: https://excelbianalytics.com/wp/downloads-20-sample-csv-files-data-sets-for-testing-till-2-million-records-bank-transactions/
+**NOTE**: the demo site has no security guarantees and it is advised to not post any personal financial data to this site until security features are fully implemented. **Summussum does not claim any responsibility for exposure of personal information submitted to this test site**. If you feel the desire to test with actual data, there are sample datasets available online, such as: https://excelbianalytics.com/wp/downloads-20-sample-csv-files-data-sets-for-testing-till-2-million-records-bank-transactions/
 
 \
 ⠀
