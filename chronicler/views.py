@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.db import models
 from django.template import loader
 from sums.models import Budgets, Users, Transactions, Accounts
+from allocator.views import create_budget_category
 from django.template.defaultfilters import slugify
 from django.forms.models import model_to_dict
 from datetime import datetime
@@ -48,7 +49,15 @@ def index(request):
 
 
 def new_target(request):
-    options = request.session["budget_options"]
+    budget_options = Budgets.objects.filter(username=request.user.username).values()
+    options = []
+    for item in budget_options:
+        if item['monthly_budget'] is not None:
+            item['monthly_budget'] = float(item['monthly_budget'])
+        if item['annual_budget'] is not None:
+            item['annual_budget'] = float(item['annual_budget'])
+        options.append(item)
+    request.session["budget_options"] = options
     if request.session["unclassified"]:
         chronicle_target = request.session["unclassified"].pop()
         request.session["chronicle_target"] = chronicle_target
@@ -83,8 +92,13 @@ def assign(request):
     return HttpResponse(html)
 
 
-def categorize_new_budget(request):
-    pass
+def new_budget(request):
+    create_budget_category(request)
+    mutable = request.POST._mutable
+    request.POST._mutable = True
+    request.POST["category_name"] = slugify(request.POST["category_display"])
+    request.POST._mutable = mutable
+    return assign(request)
 
 
 def edit(request, transaction_id):

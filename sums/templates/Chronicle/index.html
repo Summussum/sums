@@ -36,12 +36,27 @@
             <button
                 hx-post="/chronicler/assign/"
                 hx-target="#chronicle"
+                hx-swap="outerHTML"
                 value="{{option.category_name}}"
                 name="category_name"
             >{{option.category_display}}</button>
         {% empty %}
         <p>No budgets were found. Please visit <a href="/allocator/">Allocate</a></p>
         {% endfor %}
+        <br>
+        <h3>Assign Entry to New Budget</h3>
+        <form hx-post="/chronicler/new_budget/" hx-target="#chronicle" hx-swap="outerHTML" hx-vals='{"transaction_id": }'>
+            {% csrf_token %}
+            <label for name="category_display">Category name:</label>
+            <input type="text" name="category_display" placeholder="Savings"><br>
+            <br>
+            <label for name="amount">Amount to allocate: $</label>
+            <input type="number" step=".01" name="amount" placeholder="50.00"><br><br>
+
+            <input type="checkbox" name="annual">
+            <label for name="annual"> Is this category tracked yearly instead of monthly?</label><br><br>
+            <input type="submit" value="Submit">
+        </form>
         <br>
         <h3 class="centered">Chronicle History</h3>
         <table class="center_table">
