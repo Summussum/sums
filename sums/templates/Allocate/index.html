@@ -22,13 +22,14 @@
 
             <input type="checkbox" name="annual">
             <label for name="annual"> Is this category tracked yearly instead of monthly?</label><br><br>
-            <input type="submit" value="Submit">
+            <input type="submit" value="Submit" hx-indicator="#create_budget_loading">
+            <img id="create_budget_loading" class="htmx-indicator" src="/static/loading.svg">
         </form>
         <div id="error_message"></div>
         <br>
         <p>Click to load your current budgets:</p>
-        <button hx-get="/allocator/display_active_budget/" hx-target="#budget_display" hx-swap="outerHTML">View Active
-            Budget</button><br>
+        <button hx-get="/allocator/display_active_budget/" hx-target="#budget_display" hx-swap="outerHTML" hx-indicator="#budget_display_loading">View Active
+            Budget</button><img id="budget_display_loading" class="htmx-indicator" src="/static/loading.svg"><br>
             
         <div id="budget_display">
             

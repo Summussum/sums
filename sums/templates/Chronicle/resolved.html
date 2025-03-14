@@ -36,9 +36,9 @@
             <td>{{entry.account_nickname}}</td>
             <td>{{entry.recurring}}</td>
             <td>{{entry.note}}</td>
-            <td>{{entry.category_name}}</td>
+            <td>{{entry.category_name}}<img id="edit_{{entry.transaction_id}}_loading" class="htmx-indicator" src="/static/loading.svg"></td>
             <td>
-                <select name="category_name" hx-trigger="change" hx-post="/chronicler/edit/{{entry.transaction_id}}" hx-target="#id{{entry.transaction_id}}" hx-swap="outerHTML" hx-include="#id{{entry.transaction_id}}">
+                <select name="category_name" hx-trigger="change" hx-post="/chronicler/edit/{{entry.transaction_id}}" hx-target="#id{{entry.transaction_id}}" hx-swap="outerHTML" hx-include="#id{{entry.transaction_id}}" hx-indicator="#edit_{{entry.transaction_id}}_loading">
                     <option value="{{entry.category_name}}">{{entry.category_name}}</option>
                     <option value="None">None</option>
                     {% for option in options %}

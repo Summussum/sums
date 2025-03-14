@@ -2,16 +2,18 @@
 
 {% block login %}
 <div id="userform">Login:<br>
-    <form hx-post="/login_submit/" hx-target="#welcome_text" hx-swap="outerHTML">
+    <form hx-post="/login_submit/" hx-target="#welcome_text" hx-swap="outerHTML" hx-indicator="#login_loading">
         {% csrf_token %}
         <label for name="username">Username: </label>
         <input type="text" id="username" name="user_name"><br>
         <label for name="password">Password:</label>
         <input type="password" id="password" name="password"><br><br>
         <input type="submit" value="Log In">
+        <img id="login_loading" class="htmx-indicator" src="/static/loading.svg">
     </form>
     <br><br>
-    <button hx-get="/login/register/" hx-target="#userform" hx-swap="outerHTML">Create new account</button>
+    <button hx-get="/login/register/" hx-target="#userform" hx-swap="outerHTML" hx-indicator="#register_form_loading">Create new account</button>
+    <img id="register_form_loading" class="htmx-indicator" src="/static/loading.svg">
 </div>
 {% endblock %}
 
@@ -19,7 +21,7 @@
 
 {% block register %}
 <div id="userform">Register:<br>
-    <form hx-post="/register_submit/" hx-target="#welcome_text" hx-swap="outerHTML">
+    <form hx-post="/register_submit/" hx-target="#welcome_text" hx-swap="outerHTML" hx-indicator="#register_loading">
         {% csrf_token %}
         <label for name="username">Username: </label>
         <input type="text" id="username" name="user_name"><br>
@@ -28,8 +30,10 @@
         <label for name="email">Email: </label>
         <input type="email" id="email" name="email"><br><br>
         <input type="submit" value="Register">
+        <img id="register_loading" class="htmx-indicator" src="/static/loading.svg">
     </form>
     <br><br>
-    <button hx-get="/login/login/" hx-target="#userform" hx-swap="outerHTML">Back to Login</button>
+    <button hx-get="/login/login/" hx-target="#userform" hx-swap="outerHTML" hx-indicator="#login_form_loading">Back to Login</button>
+    <img id="login_form_loading" class="htmx-indicator" src="/static/loading.svg">
 </div>
 {% endblock %}

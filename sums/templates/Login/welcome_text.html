@@ -1,19 +1,20 @@
 {% block registered %}
 <div class="welcome-text" id="welcome_text">Congratulations, {{ user.username }}. You have successfully been registered!<br>
     Please log in to begin your financial journey.
-</div><br><br>
+<br><br></div>
 {% endblock %}
 
 
 {% block nonregistered %}
 <div class="welcome-text" id="welcome_text">Oh no! There seems to have been an error with your registration.<br>
     Please try again.
-</div><br><br>
+    <br><br>
+</div>
 {% endblock %}
 
 
 {% block nonlogin %}
 <div class="welcome-text" id="welcome_text">Oh no! There seems to be an issue with your login.<br>
     Please try again.
-</div><br><br>
+<br><br></div>
 {% endblock %}

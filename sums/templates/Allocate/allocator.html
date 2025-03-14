@@ -1,11 +1,16 @@
 {% block data %}
 <tr id="{{item.category_name}}">
-    <td><button hx-target="#{{item.category_name}}" hx-get="/allocator/{{item.category_name}}" hx-swap="outerHTML">Edit</button>
+    <td>
+        <button hx-target="#{{item.category_name}}" hx-get="/allocator/{{item.category_name}}" hx-swap="outerHTML" hx-indicator="#{{item.category_name}}_edit_loading">Edit</button>
+        <img id="{{item.category_name}}_edit_loading" class="htmx-indicator" src="/static/loading.svg">
     </td>
     <td>{{ item.category_display }}</td>
     <td>${{ item.monthly_budget }}</td>
     <td>${{ item.annual_budget }}</td>
-    <td><button hx-delete="/allocator/{{item.category_name}}" hx-target="#{{item.category_name}}" hx-swap="outerHTML">Delete</button></td>
+    <td>
+        <button hx-delete="/allocator/{{item.category_name}}" hx-target="#{{item.category_name}}" hx-swap="outerHTML" hx-indicator="#{{item.category_name}}_del_loading">Delete</button>
+        <img id="{{item.category_name}}_del_loading" class="htmx-indicator" src="/static/loading.svg">
+    </td>
 </tr>
 {% endblock %}
 
@@ -14,12 +19,14 @@
 
 <div id="budget_editor">
     <form>{% csrf_token %}
-        <input type="button" hx-get="/allocator/reset/{{category_name}}" hx-target="#budget_display" value="Cancel" hx-swap="outerHTML">
+        <input type="button" hx-get="/allocator/reset/{{category_name}}" hx-target="#budget_display" value="Cancel" hx-swap="outerHTML" hx-indicator="{{item.category_name}}_cancel_loading">
+        <img id="{{item.category_name}}_cancel_loading" class="htmx-indicator" src="/static/loading.svg">
         <input type="text" name="category_display" value="{{category_display}}">
         <input type="text" name="amount" value="{{amount}}">
         <input type="checkbox" name="annual">
         <div> Annual expense</div>
-        <input type="submit" hx-post="/allocator/{{category_name}}" hx-target="#budget_display" hx-swap="outerHTML">
+        <input type="submit" hx-post="/allocator/{{category_name}}" hx-target="#budget_display" hx-swap="outerHTML" hx-indicator="#{{item.category_name}}_submit_loading">
+        <img id="{{item.category_name}}_submit_loading" class="htmx-indicator" src="/static/loading.svg">
     </form>
     <div id="name_in_use"></div>
 
@@ -29,12 +36,16 @@
 {% block inline_editor %}
 
 <tr id="{{item.category_name}}">
-    <td><input type="button" hx-get="/allocator/reset/{{item.category_name}}" hx-target="#{{item.category_name}}" value="Cancel" hx-swap="outerHTML">
+    <td><input type="button" hx-get="/allocator/reset/{{item.category_name}}" hx-target="#{{item.category_name}}" value="Cancel" hx-swap="outerHTML" hx-indicator="#{{item.category_name}}_cancel_loading">
+        <img id="{{item.category_name}}_cancel_loading" class="htmx-indicator" src="/static/loading.svg">
     </td>
     <td><input type="text" name="category_display" value="{{item.category_display}}"><div id="name_in_use"></div></td>
     <td><input type="text" name="amount" value="{{amount}}"></td>
     <td><input type="checkbox" name="annual"><div> Annual expense</div></td>
-    <td><button hx-post="/allocator/{{item.category_name}}" hx-target="#{{item.category_name}}" hx-include="#{{item.category_name}}" hx-swap="outerHTML">Submit</button></td>
+    <td>
+        <button hx-post="/allocator/{{item.category_name}}" hx-target="#{{item.category_name}}" hx-include="#{{item.category_name}}" hx-swap="outerHTML" hx-indicator="#{{item.category_name}}_submit_loading">Submit</button>
+        <img id="{{item.category_name}}_submit_loading" class="htmx-indicator" src="/static/loading.svg">
+    </td>
 </tr>
 
 

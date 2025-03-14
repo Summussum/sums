@@ -88,8 +88,8 @@
             <option value="%y-%d-%b">yy-dd-M (20-31-Jan)</option>
 
         </select><br>
-        <button id="account_options" hx-get="/importer/account_options/" hx-target="#account_options" hx-swap="outerHTML">Advanced Options</button><br>
-        <button type="submit" hx-include="#account_manager" hx-post="/importer/new_account/" hx-target="#upload_result">Submit</button>
+        <button id="account_options" hx-get="/importer/account_options/" hx-target="#account_options" hx-swap="outerHTML" hx-indicator="#advanced_options_loading">Advanced Options</button><img id="advanced_options_loading" class="htmx-indicator" src="/static/loading.svg"><br>
+        <button type="submit" hx-include="#account_manager" hx-post="/importer/new_account/" hx-target="#upload_result" hx-indicator="#account_submit_loading">Submit</button><img id="account_submit_loading" class="htmx-indicator" src="/static/loading.svg">
 </div>
 
 

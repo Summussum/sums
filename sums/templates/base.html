@@ -23,10 +23,11 @@
             .centered {text-align: center;}
             .center_table {border: 1px solid; margin: 0px auto; border-collapse: collapse;}
             .center_table td, th {border: 1px solid}
+            .htmx-indicator {height:1em; width: auto;}
         </style>
     </head>
 <h2>Navigation:
-    <select hx-on:change="htmx.ajax('GET', this.options[this.selectedIndex].dataset.url, '#content')" hx-push-url="true" style="align-self:center">
+    <select hx-on:change="htmx.ajax('GET', this.options[this.selectedIndex].dataset.url, '#content')" hx-push-url="true" style="align-self:center" hx-indicator="#navbar_loading">
         {% block page_select %}{% endblock page_select %}
         <option data-url="/">Dashboard</option>
         <option data-url="/allocator/">Allocate: Manage Budgets</option>
@@ -34,7 +35,7 @@
         <option data-url="/chronicler/">Chronicle: Assign Records</option>
         <option data-url="/importer/">Import: Bank Statements</option>
         <option data-url="/explorer/graphs/">Edit: Manual Records</option>
-    </select>
+    </select><img id="navbar_loading" class="htmx-indicator" src="/static/loading.svg">
         <input type="button" hx-get="/logout/" style="justify-self:end" value="Logout" hx-target="body">
     </h2>
 <hr>

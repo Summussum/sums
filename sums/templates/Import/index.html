@@ -11,7 +11,7 @@
     <div class="centered">
         <h3 class="welcome-text" id="welcome_text">Welcome to Import!</h3>
 
-        <form hx-post="/importer/file_upload/" hx-target="#upload_result" method="post" hx-encoding="multipart/form-data" enctype="multipart/form-data">
+        <form hx-post="/importer/file_upload/" hx-target="#upload_result" method="post" hx-encoding="multipart/form-data" enctype="multipart/form-data" hx-indicator="#submit_file_loading">
             {% csrf_token %}
             <!-- insert a selector for bank fieldnames here -->
             <label for name="load_file">Choose a file to upload:</label><br>
@@ -23,7 +23,7 @@
                 <option value="{{account.nickname}}">{{account.nickname}}</option>
                 {% endfor %}
             </select>
-            <input type="submit" value="Submit">
+            <input type="submit" value="Submit"><img id="submit_file_loading" class="htmx-indicator" src="/static/loading.svg">
         </form>
         <div id="upload_result"></div>
         <div id="account_manager"></div>
