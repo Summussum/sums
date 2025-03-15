@@ -1,0 +1,14 @@
+{% block already_exists %}
+<div hx-get="/allocator/error_clear/" hx-trigger="click delay:3s from:window" hx-target="#error_message" hx-swap="outerHTML" id="error_message" style="color:red">Category already exists</div>
+{% endblock %}
+
+{% block no_category_name %}
+<div hx-get="/allocator/error_clear/" hx-trigger="click delay:3s from:window" hx-target="#error_message" hx-swap="outerHTML" id="error_message" style="color:red">Please provide a name for this budget category</div>
+{% endblock %}
+
+{% block no_amount %}
+<div hx-get="/allocator/error_clear/" hx-trigger="click delay:3s from:window" hx-target="#error_message" hx-swap="outerHTML" id="error_message" style="color:red">Please provide a numeric amount for this budget category</div>
+{% endblock %}
+
+{% block error_clear %}
+{% endblock %}

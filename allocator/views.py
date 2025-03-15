@@ -19,10 +19,21 @@ def index(request):
 def create_budget_category(request):
     user = Users.objects.get(username=request.user.username)
     new_category_display = request.POST.get("category_display")
+    if new_category_display == "":
+        html = render_block_to_string("Allocate/error_partials.html", "no_category_name", request=request)
+        response = HttpResponse(html)
+        response["HX-Retarget"] = "#error_message"
+        return response
     new_category_name = slugify(new_category_display)
     amount = request.POST.get("amount")
+    if amount == "" or is_float(amount) == False:
+        html = render_block_to_string("Allocate/error_partials.html", "no_amount", request=request)
+        response = HttpResponse(html)
+        response["HX-Retarget"] = "#error_message"
+        return response
     if Budgets.objects.filter(category_name=new_category_name, username=user.username).exists():
-        response = render(request, "Allocate/category_already_exists.html")
+        response = render_block_to_string("Allocate/error_partials.html", "already_exists", request=request)
+        response = HttpResponse(html)
         response["HX-Retarget"] = "#error_message"
         return response
     else:
@@ -59,12 +70,25 @@ def allocate(request, category_name):
 
         user = Users.objects.get(username=request.user.username)
         new_category_display = request.POST.get("category_display")
+        if new_category_display == "":
+            html = render_block_to_string("Allocate/error_partials.html", "no_category_name", request=request)
+            response = HttpResponse(html)
+            response["HX-Retarget"] = f"#name_in_use{category_name}"
+            response["HX-Reswap"] = "innerHTML"
+            return response
         new_category_name = slugify(new_category_display)
         amount = request.POST.get("amount")
-
+        if amount == "" or is_float(amount) == False:
+            html = render_block_to_string("Allocate/error_partials.html", "no_amount", request=request)
+            response = HttpResponse(html)
+            response["HX-Retarget"] = f"#name_in_use{category_name}"
+            response["HX-Reswap"] = "innerHTML"
+            return response
         if Budgets.objects.filter(category_name=new_category_name).exists() and new_category_name != category_name:
-            response = render(request, "Allocate/category_already_exists.html")
-            response["HX-Retarget"] = "#name_in_use"
+            html = render_block_to_string("Allocate/error_partials.html", "already_exists", request=request)
+            response = HttpResponse(html)
+            response["HX-Retarget"] = f"#name_in_use{category_name}"
+            response["HX-Reswap"] = "innerHTML"
             return response
         else:
             if request.POST.get("annual"):
@@ -100,4 +124,20 @@ def reset(request, category_name):
     context = {"item": budget}
     html = render_block_to_string("Allocate/allocator.html", "data", context=context, request=request)
     return HttpResponse(html)
+
+def error_clear(request):
+    html = render_block_to_string("Allocate/error_partials.html", "error_clear", request=request)
+    response = HttpResponse(html)
+    response["HX-Retarget"] = "#error_message"
+    return response
+
+def is_float(element: any) -> bool:
+    #If you expect None to be passed:
+    if element is None: 
+        return False
+    try:
+        float(element)
+        return True
+    except ValueError:
+        return False
 

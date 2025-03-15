@@ -39,7 +39,7 @@
     <td><input type="button" hx-get="/allocator/reset/{{item.category_name}}" hx-target="#{{item.category_name}}" value="Cancel" hx-swap="outerHTML" hx-indicator="#{{item.category_name}}_cancel_loading">
         <img id="{{item.category_name}}_cancel_loading" class="htmx-indicator" src="/static/loading.svg">
     </td>
-    <td><input type="text" name="category_display" value="{{item.category_display}}"><div id="name_in_use"></div></td>
+    <td><input type="text" name="category_display" value="{{item.category_display}}"><div id="name_in_use{{item.category_name}}"></div></td>
     <td><input type="text" name="amount" value="{{amount}}"></td>
     <td><input type="checkbox" name="annual"><div> Annual expense</div></td>
     <td>
