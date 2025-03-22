@@ -4,6 +4,7 @@ from render_block import render_block_to_string
 from django.contrib.auth.decorators import login_required
 from sums.models import Transactions, Budgets
 from http import HTTPStatus
+from datetime import datetime, date
 
 
 
@@ -30,9 +31,39 @@ def query_records(request):
     for record in records:
         if record.budget_id in budget_dict:
             record.category_display = budget_dict[record.budget_id]
-    response = render(request, "Explore/records.html", context={"records": records, "budgets": budgets, "budget_select": budget_select})
+    years_list = Transactions.objects.dates('transaction_date', 'year')
+    years = []
+    for year in years_list:
+        years.append(year.strftime("%Y"))
+    dates = {"current_year": datetime.now().strftime("%Y"),
+               "previous_year": str(int(datetime.now().strftime("%Y"))-1).zfill(4),
+               "current_month": datetime.now().strftime("%m"),
+               "previous_month": str(int(datetime.now().strftime("%m"))-1).zfill(2),
+               "years": years
+               }
+    response = render(request, "Explore/records.html", context={"records": records, "budgets": budgets, "budget_select": budget_select, "dates": dates})
     response["HX-Push-Url"] = request.path
     return response
+
+@login_required
+def query1(request):
+    year = request.POST.get("year")
+    month = request.POST.get("month")
+    query_string = f"{month}/{year}"
+    budgets = Budgets.objects.filter(username=request.user.username)
+    budget_dict = {}
+    for budget in budgets:
+        budget_dict[budget.budget_id] = budget.category_display
+    budget_select = render_block_to_string("Explore/partials.html", "budget_select", context={"budgets": budgets})
+    records = Transactions.objects.filter(account_owner=request.user.username, transaction_date__month=month, transaction_date__year=year)
+    for record in records:
+        if record.budget_id in budget_dict:
+            record.category_display = budget_dict[record.budget_id]
+    html = render_block_to_string("Explore/partials.html", "record_table", context={"budget_select": budget_select, "records": records, "query_string": query_string}, request=request)
+    return HttpResponse(html)
+
+def query2(request):
+    pass
 
 @login_required
 def edit_record(request, transaction_id):

@@ -8,5 +8,7 @@ urlpatterns = [
    path("record/<int:transaction_id>", views.edit_record, name="edit_record"),
    path("graphs/", views.teapot, name="explorer_graphs"),
    path("trends/", views.teapot, name="explorer_trends"),
-   path("progress/", views.teapot, name="explorer_progress")
+   path("progress/", views.teapot, name="explorer_progress"),
+   path("query1/", views.query1, name="records_query1"),
+   path("query2", views.query2, name="records_query2")
 ]
