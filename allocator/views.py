@@ -4,7 +4,7 @@ from render_block import render_block_to_string
 from django.contrib.auth.decorators import login_required
 from django.db import models
 from django.template import loader
-from sums.models import Budgets, Users
+from sums.models import Budgets, User
 from sums.graphs import return_pie
 from django.template.defaultfilters import slugify
 
@@ -17,7 +17,6 @@ def index(request):
 
 @login_required
 def create_budget_category(request):
-    user = Users.objects.get(username=request.user.username)
     new_category_display = request.POST.get("category_display")
     if new_category_display == "":
         html = render_block_to_string("Allocate/error_partials.html", "no_category_name", request=request)
@@ -31,26 +30,26 @@ def create_budget_category(request):
         response = HttpResponse(html)
         response["HX-Retarget"] = "#error_message"
         return response
-    if Budgets.objects.filter(category_name=new_category_name, username=user.username).exists():
+    if Budgets.objects.filter(category_name=new_category_name, user_id=request.user.id).exists():
         response = render_block_to_string("Allocate/error_partials.html", "already_exists", request=request)
         response = HttpResponse(html)
         response["HX-Retarget"] = "#error_message"
         return response
     else:
         if request.POST.get("annual"):
-            new_budget = Budgets(username=user,category_name=new_category_name, category_display=new_category_display,annual_budget=amount)
+            new_budget = Budgets(user_id=request.user, category_name=new_category_name, category_display=new_category_display,annual_budget=amount)
         else:
-            new_budget = Budgets(username=user,category_name=new_category_name,category_display=new_category_display,monthly_budget=amount)
+            new_budget = Budgets(user_id=request.user,category_name=new_category_name,category_display=new_category_display,monthly_budget=amount)
         new_budget.save()
         return display_active_budget(request)
 
 @login_required
 def display_active_budget(request):
     category_list = []
-    for object in Budgets.objects.filter(username=request.user.username):
+    for object in Budgets.objects.filter(user_id=request.user.id):
         category_list.append(object)
     category_list = sorted(category_list, key=lambda x: x.category_name)
-    graph_div = return_pie(request.user.username)
+    graph_div = return_pie(request.user.id)
     context = {"category_list": category_list, "graph_div": graph_div}
     template = loader.get_template("Allocate/budget_display.html")
     return HttpResponse(template.render(context, request))
@@ -58,7 +57,7 @@ def display_active_budget(request):
 @login_required
 def allocate(request, category_name):
     if request.method == 'GET':
-        budget = Budgets.objects.filter(category_name=category_name, username=request.user.username).first()
+        budget = Budgets.objects.filter(category_name=category_name, user_id=request.user.id).first()
         if budget.monthly_budget:
             amount = budget.monthly_budget
         else:
@@ -68,7 +67,6 @@ def allocate(request, category_name):
 
     elif request.method == 'POST':
 
-        user = Users.objects.get(username=request.user.username)
         new_category_display = request.POST.get("category_display")
         if new_category_display == "":
             html = render_block_to_string("Allocate/error_partials.html", "no_category_name", request=request)
@@ -92,9 +90,9 @@ def allocate(request, category_name):
             return response
         else:
             if request.POST.get("annual"):
-                 new_budget = Budgets(username=user,category_name=new_category_name,category_display=new_category_display,annual_budget=amount)
+                 new_budget = Budgets(user_id=request.user.id,category_name=new_category_name,category_display=new_category_display,annual_budget=amount)
             else:
-                new_budget = Budgets(username=user,category_name=new_category_name, category_display=new_category_display,monthly_budget=amount)
+                new_budget = Budgets(user_id=request.user.id,category_name=new_category_name, category_display=new_category_display,monthly_budget=amount)
             
             instance = Budgets.objects.filter(category_name=category_name)
             instance.delete()

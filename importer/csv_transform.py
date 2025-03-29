@@ -1,4 +1,4 @@
-import csv
+import csv, json
 from datetime import datetime
 from django import forms
 from dateutil.parser import parse
@@ -11,8 +11,8 @@ class UploadFileForm(forms.Form):
 class Transformer():
     def __init__(self, file, translator: dict, date_format: str):
         self.new_entry = []
-        self.fieldnames = list(translator.keys())
-        self.translator = translator
+        self.fieldnames = list(json.loads(translator).keys())
+        self.translator = json.loads(translator)
         self.file = file
         self.record = self.generate_record()
         self.date_format = date_format

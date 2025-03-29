@@ -11,7 +11,7 @@ from datetime import datetime, date
 # Create your views here.
 @login_required
 def index(request):
-    budgets = Budgets.objects.filter(username=request.user.username)
+    budgets = Budgets.objects.filter(user_id=request.user.id)
     budget_dict = {}
     for budget in budgets:
         budget_dict[budget.budget_id] = (budget.category_name, budget.category_display)
@@ -21,7 +21,7 @@ def index(request):
 
 @login_required
 def query_records(request):
-    budgets = Budgets.objects.filter(username=request.user.username)
+    budgets = Budgets.objects.filter(user_id=request.user.id)
     budget_options = budgets.values()
     options = []
     for item in budget_options:
@@ -34,7 +34,7 @@ def query_records(request):
     budget_dict = {}
     for budget in budgets:
         budget_dict[budget.budget_id] = [budget.category_display, budget.category_name]
-    records = Transactions.objects.filter(account_owner=request.user.username)
+    records = Transactions.objects.filter(user_id=request.user.id)
     for record in records:
         if record.budget_id in budget_dict:
             record.category_display = budget_dict[record.budget_id][0]
@@ -58,13 +58,13 @@ def query1(request):
     year = request.POST.get("year")
     month = request.POST.get("month")
     query_string = f"{month}/{year}"
-    budgets = Budgets.objects.filter(username=request.user.username)
+    budgets = Budgets.objects.filter(user_id=request.user.id)
     budget_dict = {}
     options = request.session["budget_options"]
     for budget in budgets:
         budget_dict[budget.budget_id] = budget.category_display
     budget_select = render_block_to_string("Explore/partials.html", "budget_select", context={"budgets": budgets})
-    records = Transactions.objects.filter(account_owner=request.user.username, transaction_date__month=month, transaction_date__year=year)
+    records = Transactions.objects.filter(user_id=request.user.id, transaction_date__month=month, transaction_date__year=year)
     for record in records:
         if record.budget_id in budget_dict:
             record.category_display = budget_dict[record.budget_id]
@@ -81,12 +81,12 @@ def edit_record(request, transaction_id):
     if request.POST.get("category_name") == "None":
         record.budget_id = None
     else:
-        record.budget_id = Budgets.objects.get(username=request.user.username, category_name=request.POST.get("category_name")).budget_id
+        record.budget_id = Budgets.objects.get(user_id=request.user.id, category_name=request.POST.get("category_name")).budget_id
     record.save()
     record.category_display = "None"
     record.category_name = "None"
     if record.budget_id:
-        budget_item = Budgets.objects.get(username=request.user.username, budget_id=record.budget_id)
+        budget_item = Budgets.objects.get(user_id=request.user.id, budget_id=record.budget_id)
         record.category_display = budget_item.category_display
         record.category_name = budget_item.category_name
     html = render_block_to_string("Explore/partials.html", "record", context={"record": record, "options": options})

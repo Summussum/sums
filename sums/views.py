@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from . import models
+from sums.models import User
 from render_block import render_block_to_string
 from django_htmx.http import HttpResponseClientRedirect
 from django.shortcuts import redirect
@@ -26,7 +27,6 @@ def sums_entrypoint(request):
     return render(request, "Login/index.html")
 
 def sums_login_form(request):
-    context = {}
     html = render_block_to_string("Login/login.html", "login")
     return HttpResponse(html)
 
@@ -54,9 +54,8 @@ def sums_register_submit(request):
     new_password = request.POST.get("password")
     user = User.objects.create_user(new_username, new_email, new_password)
     user.save()
-    sums_user = models.Users(username=new_username, email=new_email)
-    sums_user.save()
     new_user = User.objects.filter(username=new_username).first()
+    request.session["user_id"] = new_user.id
     if new_user:
         context = {"user": new_user}
         html = render_block_to_string("Login/welcome_text.html", "registered", context=context)

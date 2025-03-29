@@ -4,7 +4,7 @@ from render_block import render_block_to_string
 from django.contrib.auth.decorators import login_required
 from django.db import models
 from django.template import loader
-from sums.models import Budgets, Users, Transactions, Accounts
+from sums.models import Budgets, User, Transactions, Accounts
 from django.template.defaultfilters import slugify
 from . import csv_transform
 from datetime import datetime
@@ -14,7 +14,7 @@ import json
 @login_required
 def index(request):
     try:
-        accounts = Accounts.objects.filter(account_owner=request.user.username)
+        accounts = Accounts.objects.filter(user_id=request.user.id)
     except:
         accounts = []
     response = render(request, "Import/index.html", context={"accounts": accounts})
@@ -74,7 +74,7 @@ def make_new_account(request):
     new_account = Accounts(
         nickname = request.POST.get("nickname"),
         bank = request.POST.get("bank"),
-        account_owner = Users.objects.get(username = request.user.username),
+        user_id = request.user,
         account_type = request.POST.get("account_type"),
         account_last_four = request.POST.get("account_last_four"),
         translator = json.dumps(new_translator),
@@ -89,10 +89,9 @@ def make_new_account(request):
     
 @login_required
 def csv_file_save(request):
-    user = Users.objects.get(username=request.user.username)
 
     account_nickname = request.POST.get("nickname")
-    account = Accounts.objects.get(account_owner=request.user.username, nickname=account_nickname)
+    account = Accounts.objects.get(user_id=request.user.id, nickname=account_nickname)
     translator = account.translator
     date_format = account.date_formatter
     files = request.session["csv_files"]
@@ -100,7 +99,7 @@ def csv_file_save(request):
         for f in files:
             file = csv_transform.Transformer(f, translator, date_format)
             for line in file.record:
-                entry = Transactions(amount=line["amount"], transaction_date=line["transaction_date"], transaction_description=line["transaction_description"], account_nickname=account.nickname, account_owner=user)
+                entry = Transactions(amount=line["amount"], transaction_date=line["transaction_date"], transaction_description=line["transaction_description"], account_nickname=account.nickname, user_id=request.user)
                 entry.save()
     if request.path == "/importer/new_account/":
         accounts = [account]

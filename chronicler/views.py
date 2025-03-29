@@ -4,7 +4,7 @@ from render_block import render_block_to_string
 from django.contrib.auth.decorators import login_required
 from django.db import models
 from django.template import loader
-from sums.models import Budgets, Users, Transactions, Accounts
+from sums.models import Budgets, User, Transactions, Accounts
 from allocator.views import create_budget_category
 from django.template.defaultfilters import slugify
 from django.forms.models import model_to_dict
@@ -16,8 +16,8 @@ import json
 
 @login_required
 def index(request):
-    unclassified = Transactions.objects.filter(budget_id__isnull=True, account_owner=request.user.username).values()
-    budget_options = Budgets.objects.filter(username=request.user.username).values()
+    unclassified = Transactions.objects.filter(budget_id__isnull=True, user_id=request.user.id).values()
+    budget_options = Budgets.objects.filter(user_id=request.user.id).values()
     options = []
     for item in budget_options:
         if item['monthly_budget'] is not None:
@@ -49,7 +49,7 @@ def index(request):
 
 
 def new_target(request):
-    budget_options = Budgets.objects.filter(username=request.user.username).values()
+    budget_options = Budgets.objects.filter(user_id=request.user.id).values()
     options = []
     for item in budget_options:
         if item['monthly_budget'] is not None:
@@ -72,7 +72,7 @@ def new_target(request):
 def assign(request):
     target = request.session["chronicle_target"]
     category_name = request.POST.get("category_name")
-    budget = Budgets.objects.filter(username=request.user.username, category_name=category_name).first()
+    budget = Budgets.objects.filter(user_id=request.user.id, category_name=category_name).first()
     entry = Transactions.objects.filter(transaction_id=target['transaction_id']).first()
     entry.budget_id = budget.budget_id
     entry.save()
@@ -105,12 +105,12 @@ def edit(request, transaction_id):
     category_name = request.POST.get("category_name")
     transaction_id = transaction_id
     options = request.session["budget_options"]
-    entry = Transactions.objects.get(account_owner=request.user.username, transaction_id=transaction_id)
+    entry = Transactions.objects.get(user_id=request.user.id, transaction_id=transaction_id)
     if category_name == "None":
         entry.budget_id = None
         budget = None
     else:
-        budget = Budgets.objects.get(username = request.user.username, category_name=category_name)
+        budget = Budgets.objects.get(user_id = request.user.id, category_name=category_name)
         entry.budget_id = budget.budget_id
     entry.category_name = category_name
     entry.save()
@@ -140,7 +140,7 @@ def edit(request, transaction_id):
 
 
 def get_budget_dict(request):
-    budgets = Budgets.objects.filter(username=request.user.username)
+    budgets = Budgets.objects.filter(user_id=request.user.id)
     budget_dict = {}
     for budget in budgets:
         budget_dict[budget.budget_id] = budget.category_name
