@@ -1,3 +1,4 @@
+<!--defunct-->
 {% block budget_select %}
 
     <option value="None">None</option>
@@ -14,19 +15,22 @@
 
 {% block record %}
 <tr id="record_{{ record.transaction_id}}">
-    <td><button hx-post="/explorer/record/{{ record.transaction_id }}" hx-target="#record_{{ record.transaction_id }}" hx-swap="outerHTML" hx-include="#record_{{ record.transaction_id}}">Save</button></td>
-    <td>{{ record.transaction_date }}</td>
-    <td>
-            <select name="budget_selector">
-                    <option value="{{record.budget_id}}">{{category_name}}</option>
-                    {{ budget_select }}
-            </select>
-    </td>
-    <td>{{ record.amount }}</td>
-    <td>{{ record.transaction_description }}</td>
-    <td>{{ record.account_nickname }}</td>
-    <td>{{ record.recurring }}</td>
-    <td>{{ record.note }}</td>
+        <td>{{ record.transaction_date }}</td>
+        <td>{{ record.amount }}</td>
+        <td>{{ record.transaction_description }}</td>
+        <td>{{ record.account_nickname }}</td>
+        <td>{{ record.recurring }}</td>
+        <td>{{ record.note }}</td>
+        <td>{{record.category_display}}<img id="record_{{ record.transaction_id}}_loading" class="htmx-indicator" src="/static/loading.svg"></td>
+        <td>
+                <select name="category_name" hx-trigger="change" hx-post="/explorer/record/{{ record.transaction_id }}" hx-target="#record_{{ record.transaction_id }}" hx-swap="outerHTML" hx-include="#record_{{ record.transaction_id}}" hx-indicator="#record_{{ record.transaction_id}}_loading">
+                        <option value="{{record.category_name}}">{{record.category_display}}</option>
+                        <option value="None">None</option>
+                        {% for option in options %}
+                        <option value="{{option.category_name}}">{{option.category_display}}</option>
+                        {% endfor %}
+                </select>
+        </td>
 </tr>
 
 {% endblock %}
@@ -35,46 +39,40 @@
 
 {% block record_table %}
 <table class="center_table" id="record_table">
-    <caption>RECORDS: {{query_string}}</caption>
-    <thead>
-            <tr>
-                    <th>Edit all?</th>
-                    <th>Date</th>
-                    <th>Budget</th>
-                    <th>Amount</th>
-                    <th>Description</th>
-                    <th>Account</th>
-                    <th>Recurring</th>
-                    <th>Note</th>
-
-            </tr>
-            {% for record in records %}
-            <tr id="record_{{ record.transaction_id}}">
-                    <td><button
-                            hx-post="/explorer/record/{{ record.transaction_id }}"
-                            hx-target="#record_{{ record.transaction_id }}"
-                            hx-swap="outerHTML"
-                            hx-include="#record_{{ record.transaction_id}}"
-                            >Save
-                    </button></td>
-                    <td>{{ record.transaction_date }}</td>
-                    <td>
-                            <select name="budget_selector">
-                                    <option value="{{record.budget_id}}">{{record.category_display}}</option>
-                                    {{ budget_select }}
-                            </select>
-                    </td>
-                    <td>{{ record.amount }}</td>
-                    <td>{{ record.transaction_description }}</td>
-                    <td>{{ record.account_nickname }}</td>
-                    <td>{{ record.recurring }}</td>
-                    <td>{{ record.note }}</td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="8">No records match your current query.</td>
-            </tr>
-            {% endfor %}
-    </thead>
+        <caption>RECORDS: <div id="date_query">{{query_string}}</div></caption>
+        <thead>
+                <tr>
+                        <th>Date</th>
+                        <th>Amount</th>
+                        <th>Description</th>
+                        <th>Account</th>
+                        <th>Recurring</th>
+                        <th>Note</th>
+                        <th>Category</th>
+                        <th>Edit</th>
+                </tr>
+        </thead>
+        <tbody>
+                {% for record in records %}
+                <tr id="record_{{ record.transaction_id}}">
+                        <td>{{ record.transaction_date }}</td>
+                        <td>{{ record.amount }}</td>
+                        <td>{{ record.transaction_description }}</td>
+                        <td>{{ record.account_nickname }}</td>
+                        <td>{{ record.recurring }}</td>
+                        <td>{{ record.note }}</td>
+                        <td>{{record.category_display}}<img id="record_{{ record.transaction_id}}_loading" class="htmx-indicator" src="/static/loading.svg"></td>
+                        <td>
+                                <select name="category_name" hx-trigger="change" hx-post="/explorer/record/{{ record.transaction_id }}" hx-target="#record_{{ record.transaction_id }}" hx-swap="outerHTML" hx-include="#record_{{ record.transaction_id}}" hx-indicator="#record_{{ record.transaction_id}}_loading">
+                                        <option value="{{record.category_name}}">{{record.category_display}}</option>
+                                        <option value="None">None</option>
+                                        {% for option in options %}
+                                        <option value="{{option.category_name}}">{{option.category_display}}</option>
+                                        {% endfor %}
+                                </select>
+                        </td>
+                </tr>
+                {% endfor %}
+        </tbody>
 </table>
 {% endblock %}

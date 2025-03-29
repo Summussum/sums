@@ -21,24 +21,16 @@ def index(request):
 
 @login_required
 def query_records(request):
+    # category_name, category_display, date, budget_select(html selector with its own view), amount, description, recurring(checkbox), note(text edit, limit char display? except hover?)
     budgets = Budgets.objects.filter(username=request.user.username)
-    budget_options = budgets.values()
-    options = []
-    for item in budget_options:
-        if item['monthly_budget'] is not None:
-            item['monthly_budget'] = float(item['monthly_budget'])
-        if item['annual_budget'] is not None:
-            item['annual_budget'] = float(item['annual_budget'])
-        options.append(item)
-    request.session["budget_options"] = options
     budget_dict = {}
     for budget in budgets:
-        budget_dict[budget.budget_id] = [budget.category_display, budget.category_name]
+        budget_dict[budget.budget_id] = budget.category_display
+    budget_select = render_block_to_string("Explore/partials.html", "budget_select", context={"budgets": budgets})
     records = Transactions.objects.filter(account_owner=request.user.username)
     for record in records:
         if record.budget_id in budget_dict:
-            record.category_display = budget_dict[record.budget_id][0]
-            record.category_name = budget_dict[record.budget_id][1]
+            record.category_display = budget_dict[record.budget_id]
     years_list = Transactions.objects.dates('transaction_date', 'year')
     years = []
     for year in years_list:
@@ -49,7 +41,7 @@ def query_records(request):
                "previous_month": str(int(datetime.now().strftime("%m"))-1).zfill(2),
                "years": years
                }
-    response = render(request, "Explore/records.html", context={"records": records, "dates": dates, "options": options})
+    response = render(request, "Explore/records.html", context={"records": records, "budgets": budgets, "budget_select": budget_select, "dates": dates})
     response["HX-Push-Url"] = request.path
     return response
 
@@ -60,7 +52,6 @@ def query1(request):
     query_string = f"{month}/{year}"
     budgets = Budgets.objects.filter(username=request.user.username)
     budget_dict = {}
-    options = request.session["budget_options"]
     for budget in budgets:
         budget_dict[budget.budget_id] = budget.category_display
     budget_select = render_block_to_string("Explore/partials.html", "budget_select", context={"budgets": budgets})
@@ -68,7 +59,7 @@ def query1(request):
     for record in records:
         if record.budget_id in budget_dict:
             record.category_display = budget_dict[record.budget_id]
-    html = render_block_to_string("Explore/partials.html", "record_table", context={"budget_select": budget_select, "records": records, "query_string": query_string, "options": options}, request=request)
+    html = render_block_to_string("Explore/partials.html", "record_table", context={"budget_select": budget_select, "records": records, "query_string": query_string}, request=request)
     return HttpResponse(html)
 
 def query2(request):
@@ -77,19 +68,17 @@ def query2(request):
 @login_required
 def edit_record(request, transaction_id):
     record = Transactions.objects.get(transaction_id=transaction_id)
-    options = request.session["budget_options"]
-    if request.POST.get("category_name") == "None":
+    budgets = Budgets.objects.filter(username=request.user.username)
+    if request.POST.get("budget_selector") == "None":
         record.budget_id = None
     else:
-        record.budget_id = Budgets.objects.get(username=request.user.username, category_name=request.POST.get("category_name")).budget_id
+        record.budget_id = request.POST.get("budget_selector")
     record.save()
-    record.category_display = "None"
-    record.category_name = "None"
+    category_name = "None"
     if record.budget_id:
-        budget_item = Budgets.objects.get(username=request.user.username, budget_id=record.budget_id)
-        record.category_display = budget_item.category_display
-        record.category_name = budget_item.category_name
-    html = render_block_to_string("Explore/partials.html", "record", context={"record": record, "options": options})
+        category_name = Budgets.objects.get(username=request.user.username, budget_id=record.budget_id).category_display
+    budget_select = render_block_to_string("Explore/partials.html", "budget_select", context={"budgets": budgets})
+    html = render_block_to_string("Explore/partials.html", "record", context={"record": record, "budget_select": budget_select, "category_name": category_name})
     return HttpResponse(html)
 
 
