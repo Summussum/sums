@@ -144,3 +144,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # from django-htmx
 
 # STATICFILES_DIRS = [BASE_DIR / "static"]
+
+#Settings for Session Middleware
+#https://docs.djangoproject.com/en/4.0/ref/settings/#session-save-every-request
+SESSION_COOKIE_AGE = 3000 # 50 minutes. "1209600(2 weeks)" by default
+SESSION_COOKIE_SECURE = True # "False" by default
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True # "False" by default
+SESSION_SAVE_EVERY_REQUEST = True # "False" by default
