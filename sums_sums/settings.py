@@ -26,9 +26,12 @@ SECRET_KEY = os.environ['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+#DEBUG = False
 
 ALLOWED_HOSTS = ['*']
-
+#PREPEND_WWW = True
+#BASE_URL = "https://summussum.com"
+#ALLOWED_HOSTS = ['www.summussum.com', 'summussum.com', '35.233.240.209']
 
 LOGIN_URL = "sums_entrypoint"
 LOGIN_REDIRECT_URL = "/"
