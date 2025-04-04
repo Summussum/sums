@@ -5,13 +5,14 @@ from django.contrib.auth.decorators import login_required
 from sums.models import Transactions, Budgets
 from http import HTTPStatus
 from datetime import datetime, date
+from django.db.models import Sum, FloatField
 
 
 
 # Create your views here.
 @login_required
 def index(request):
-    budgets = Budgets.objects.filter(user_id=request.user.id)
+    budgets = Budgets.objects.filter(user=request.user)
     budget_dict = {}
     for budget in budgets:
         budget_dict[budget.budget_id] = (budget.category_name, budget.category_display)
@@ -21,7 +22,7 @@ def index(request):
 
 @login_required
 def query_records(request):
-    budgets = Budgets.objects.filter(user_id=request.user.id)
+    budgets = Budgets.objects.filter(user=request.user)
     budget_options = budgets.values()
     options = []
     for item in budget_options:
@@ -31,15 +32,9 @@ def query_records(request):
             item['annual_budget'] = float(item['annual_budget'])
         options.append(item)
     request.session["budget_options"] = options
-    budget_dict = {}
-    for budget in budgets:
-        budget_dict[budget.budget_id] = [budget.category_display, budget.category_name]
-    records = Transactions.objects.filter(user_id=request.user.id)
-    for record in records:
-        if record.budget_id in budget_dict:
-            record.category_display = budget_dict[record.budget_id][0]
-            record.category_name = budget_dict[record.budget_id][1]
-    years_list = Transactions.objects.dates('transaction_date', 'year')
+    records_query = Transactions.objects.filter(user=request.user)
+    records = records_query.values('account__nickname', 'budget__category_display', 'budget__category_name', 'transaction_id', 'amount', 'transaction_date', 'transaction_description', 'budget', 'note', 'recurring', 'user', 'account')
+    years_list = records_query.dates('transaction_date', 'year')
     years = []
     for year in years_list:
         years.append(year.strftime("%Y"))
@@ -58,16 +53,10 @@ def query1(request):
     year = request.POST.get("year")
     month = request.POST.get("month")
     query_string = f"{month}/{year}"
-    budgets = Budgets.objects.filter(user_id=request.user.id)
-    budget_dict = {}
     options = request.session["budget_options"]
-    for budget in budgets:
-        budget_dict[budget.budget_id] = budget.category_display
+    budgets = Budgets.objects.filter(user=request.user)
     budget_select = render_block_to_string("Explore/partials.html", "budget_select", context={"budgets": budgets})
-    records = Transactions.objects.filter(user_id=request.user.id, transaction_date__month=month, transaction_date__year=year)
-    for record in records:
-        if record.budget_id in budget_dict:
-            record.category_display = budget_dict[record.budget_id]
+    records = Transactions.objects.filter(user=request.user, transaction_date__month=month, transaction_date__year=year).values('account__nickname', 'budget__category_name', 'budget__category_display', 'transaction_id', 'amount', 'transaction_date', 'transaction_description', 'budget', 'note', 'recurring', 'user', 'account')
     html = render_block_to_string("Explore/partials.html", "record_table", context={"budget_select": budget_select, "records": records, "query_string": query_string, "options": options}, request=request)
     return HttpResponse(html)
 
@@ -79,18 +68,23 @@ def edit_record(request, transaction_id):
     record = Transactions.objects.get(transaction_id=transaction_id)
     options = request.session["budget_options"]
     if request.POST.get("category_name") == "None":
-        record.budget_id = None
+        record.budget = None
     else:
-        record.budget_id = Budgets.objects.get(user_id=request.user.id, category_name=request.POST.get("category_name")).budget_id
+        record.budget = Budgets.objects.get(user=request.user, category_name=request.POST.get("category_name"))
     record.save()
-    record.category_display = "None"
-    record.category_name = "None"
-    if record.budget_id:
-        budget_item = Budgets.objects.get(user_id=request.user.id, budget_id=record.budget_id)
-        record.category_display = budget_item.category_display
-        record.category_name = budget_item.category_name
-    html = render_block_to_string("Explore/partials.html", "record", context={"record": record, "options": options})
+    record.budget__category_display = "None"
+    record.budget__category_name = "None"
+    record.account__nickname = record.account.nickname
+    if record.budget:
+        record.budget__category_display = record.budget.category_display
+        record.budget__category_name = record.budget.category_name
+    html = render_block_to_string("Explore/partials.html", "record", context={"record": record, "options": options}, request=request)
     return HttpResponse(html)
+
+@login_required
+def monthly_reports(request):
+    expense_totals = Transactions.objects.filter(user=request.user).select_related("budget_id__category_display").values("budget_id").annotate(Sum("amount",output_field=FloatField()))
+    return render(request, "Explore/monthly_reports.html", context={"expenses": expense_totals})
 
 
 def teapot(request):

@@ -25,7 +25,7 @@
                 <td>{{target.transaction_date}}</td>
                 <td>{{target.amount}}</td>
                 <td>{{target.transaction_description}}</td>
-                <td>{{target.account_nickname}}</td>
+                <td>{{target.account__nickname}}</td>
                 <td>{{target.recurring}}</td>
                 <td>{{target.note}}</td>
                 <td><img id="budget_assign_loading" class="htmx-indicator" src="/static/loading.svg"></td>
@@ -78,7 +78,7 @@
                 <td>{{entry.transaction_date}}</td>
                 <td>{{entry.amount}}</td>
                 <td>{{entry.transaction_description}}</td>
-                <td>{{entry.account_nickname}}</td>
+                <td>{{entry.account__nickname}}</td>
                 <td>{{entry.recurring}}</td>
                 <td>{{entry.note}}</td>
                 <td>{{entry.category_name}}<img id="edit_{{entry.transaction_id}}_loading" class="htmx-indicator" src="/static/loading.svg"></td>
@@ -99,6 +99,7 @@
             {% endfor %}
         </table>
     </div>
+    {{test}}
 
 
 

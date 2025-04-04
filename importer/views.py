@@ -14,7 +14,7 @@ import json
 @login_required
 def index(request):
     try:
-        accounts = Accounts.objects.filter(user_id=request.user.id)
+        accounts = Accounts.objects.filter(user=request.user)
     except:
         accounts = []
     response = render(request, "Import/index.html", context={"accounts": accounts})
@@ -74,7 +74,7 @@ def make_new_account(request):
     new_account = Accounts(
         nickname = request.POST.get("nickname"),
         bank = request.POST.get("bank"),
-        user_id = request.user,
+        user = request.user,
         account_type = request.POST.get("account_type"),
         account_last_four = request.POST.get("account_last_four"),
         translator = json.dumps(new_translator),
@@ -91,7 +91,7 @@ def make_new_account(request):
 def csv_file_save(request):
 
     account_nickname = request.POST.get("nickname")
-    account = Accounts.objects.get(user_id=request.user.id, nickname=account_nickname)
+    account = Accounts.objects.get(user=request.user, nickname=account_nickname)
     translator = account.translator
     date_format = account.date_formatter
     files = request.session["csv_files"]
@@ -99,7 +99,7 @@ def csv_file_save(request):
         for f in files:
             file = csv_transform.Transformer(f, translator, date_format)
             for line in file.record:
-                entry = Transactions(amount=line["amount"], transaction_date=line["transaction_date"], transaction_description=line["transaction_description"], account_nickname=account.nickname, user_id=request.user)
+                entry = Transactions(amount=line["amount"], transaction_date=line["transaction_date"], transaction_description=line["transaction_description"], account=account, user=request.user)
                 entry.save()
     if request.path == "/importer/new_account/":
         accounts = [account]

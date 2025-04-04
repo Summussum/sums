@@ -30,26 +30,26 @@ def create_budget_category(request):
         response = HttpResponse(html)
         response["HX-Retarget"] = "#error_message"
         return response
-    if Budgets.objects.filter(category_name=new_category_name, user_id=request.user.id).exists():
+    if Budgets.objects.filter(category_name=new_category_name, user=request.user).exists():
         response = render_block_to_string("Allocate/error_partials.html", "already_exists", request=request)
         response = HttpResponse(html)
         response["HX-Retarget"] = "#error_message"
         return response
     else:
         if request.POST.get("annual"):
-            new_budget = Budgets(user_id=request.user, category_name=new_category_name, category_display=new_category_display,annual_budget=amount)
+            new_budget = Budgets(user=request.user, category_name=new_category_name, category_display=new_category_display,annual_budget=amount)
         else:
-            new_budget = Budgets(user_id=request.user,category_name=new_category_name,category_display=new_category_display,monthly_budget=amount)
+            new_budget = Budgets(user=request.user,category_name=new_category_name,category_display=new_category_display,monthly_budget=amount)
         new_budget.save()
         return display_active_budget(request)
 
 @login_required
 def display_active_budget(request):
     category_list = []
-    for object in Budgets.objects.filter(user_id=request.user.id):
+    for object in Budgets.objects.filter(user=request.user):
         category_list.append(object)
     category_list = sorted(category_list, key=lambda x: x.category_name)
-    graph_div = return_pie(request.user.id)
+    graph_div = return_pie(request.user)
     context = {"category_list": category_list, "graph_div": graph_div}
     template = loader.get_template("Allocate/budget_display.html")
     return HttpResponse(template.render(context, request))
@@ -57,7 +57,7 @@ def display_active_budget(request):
 @login_required
 def allocate(request, category_name):
     if request.method == 'GET':
-        budget = Budgets.objects.filter(category_name=category_name, user_id=request.user.id).first()
+        budget = Budgets.objects.filter(category_name=category_name, user=request.user).first()
         if budget.monthly_budget:
             amount = budget.monthly_budget
         else:
@@ -90,9 +90,9 @@ def allocate(request, category_name):
             return response
         else:
             if request.POST.get("annual"):
-                 new_budget = Budgets(user_id=request.user.id,category_name=new_category_name,category_display=new_category_display,annual_budget=amount)
+                 new_budget = Budgets(user=request.user,category_name=new_category_name,category_display=new_category_display,annual_budget=amount)
             else:
-                new_budget = Budgets(user_id=request.user.id,category_name=new_category_name, category_display=new_category_display,monthly_budget=amount)
+                new_budget = Budgets(user=request.user,category_name=new_category_name, category_display=new_category_display,monthly_budget=amount)
             
             instance = Budgets.objects.filter(category_name=category_name)
             instance.delete()

@@ -16,8 +16,8 @@ import json
 
 @login_required
 def index(request):
-    unclassified = Transactions.objects.filter(budget_id__isnull=True, user_id=request.user.id).values()
-    budget_options = Budgets.objects.filter(user_id=request.user.id).values()
+    unclassified = Transactions.objects.filter(budget__isnull=True, user=request.user).values('account__nickname', 'transaction_id', 'amount', 'transaction_date', 'transaction_description', 'budget', 'note', 'recurring', 'user', 'account')
+    budget_options = Budgets.objects.filter(user=request.user).values()
     options = []
     for item in budget_options:
         if item['monthly_budget'] is not None:
@@ -49,7 +49,7 @@ def index(request):
 
 
 def new_target(request):
-    budget_options = Budgets.objects.filter(user_id=request.user.id).values()
+    budget_options = Budgets.objects.filter(user=request.user).values()
     options = []
     for item in budget_options:
         if item['monthly_budget'] is not None:
@@ -72,18 +72,17 @@ def new_target(request):
 def assign(request):
     target = request.session["chronicle_target"]
     category_name = request.POST.get("category_name")
-    budget = Budgets.objects.filter(user_id=request.user.id, category_name=category_name).first()
+    budget = Budgets.objects.filter(user=request.user, category_name=category_name).first()
     entry = Transactions.objects.filter(transaction_id=target['transaction_id']).first()
-    entry.budget_id = budget.budget_id
+    entry.budget = budget
     entry.save()
-    entry.amount = float(entry.amount)
-    entry.transaction_date = entry.transaction_date.strftime('%b %d, %Y')
-    entry = model_to_dict(entry)
-    request.session["chronicle_recent"].append(entry)
-    request.session["budget_dict"] = get_budget_dict(request)
+    entry_dict = Transactions.objects.filter(transaction_id=target['transaction_id']).values('account__nickname', 'transaction_id', 'amount', 'transaction_date', 'transaction_description', 'budget', 'note', 'recurring', 'user', 'account').first()
+    entry_dict["amount"] = float(entry_dict["amount"])
+    entry_dict["transaction_date"] = entry_dict["transaction_date"].strftime('%b %d, %Y')
+    entry_dict["budget__category_display"] = budget.category_display
+    entry_dict["budget__category_name"] = budget.category_name
+    request.session["chronicle_recent"].append(entry_dict)
     chronicle_history = request.session["chronicle_recent"][-1:-11:-1]
-    for item in chronicle_history:
-        item["category_name"] = request.session["budget_dict"][item["budget_id"]]
     request, chronicle_target, options = new_target(request)
     if chronicle_target:
         html = render_block_to_string("Chronicle/partials.html", "chronicle", context={"target": chronicle_target, "chronicle_history": chronicle_history, "options": options}, request=request)
@@ -105,32 +104,33 @@ def edit(request, transaction_id):
     category_name = request.POST.get("category_name")
     transaction_id = transaction_id
     options = request.session["budget_options"]
-    entry = Transactions.objects.get(user_id=request.user.id, transaction_id=transaction_id)
+    entry = Transactions.objects.get(user=request.user, transaction_id=transaction_id)
     if category_name == "None":
-        entry.budget_id = None
+        entry.budget = None
         budget = None
     else:
-        budget = Budgets.objects.get(user_id = request.user.id, category_name=category_name)
-        entry.budget_id = budget.budget_id
-    entry.category_name = category_name
+        budget = Budgets.objects.get(user = request.user, category_name=category_name)
+        entry.budget = budget
     entry.save()
-    test = []
-    test.append(request.session["unclassified"])
+    entry.account__nickname = entry.account.nickname
+    entry.budget__category_name = category_name
+    if budget:
+        entry.budget__category_display = budget.category_display
+    else:
+        entry.budget__category_display = "None"
     chronicle_recent = request.session.get("chronicle_recent")
     for i, item in enumerate(chronicle_recent):
         if item["transaction_id"] == transaction_id:
-            item["category_name"] = category_name
+            item["category_name"] = entry.budget__category_name
+            item["category_display"] = entry.budget__category_display
             if budget is not None:
-                item["budget_id"] = budget.budget_id
+                item["budget"] = budget.budget_id
             else:
-                item["budget_id"] = "None"
-                item["category_name"] = "None"
+                item["budget"] = "None"
                 chronicle_load = request.session["unclassified"]
                 chronicle_load.append(item)
                 request.session["unclassified"] = chronicle_load
                 chronicle_recent.pop(i)
-                test.append(chronicle_recent)
-                test.append(request.session["unclassified"])
             request.session["chronicle_recent"] = chronicle_recent
             break
     html = render_block_to_string("Chronicle/partials.html", "chronicle_line", context={"entry": entry, "options": options}, request=request)
@@ -138,10 +138,11 @@ def edit(request, transaction_id):
 
 
 
-
+"""
 def get_budget_dict(request):
-    budgets = Budgets.objects.filter(user_id=request.user.id)
+    budgets = Budgets.objects.filter(user=request.user)
     budget_dict = {}
     for budget in budgets:
-        budget_dict[budget.budget_id] = budget.category_name
-    return budget_dict
+        budget_dict[budget] = budget.category_name
+    return budget_dict"
+"""

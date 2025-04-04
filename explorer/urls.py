@@ -6,6 +6,7 @@ urlpatterns = [
    path("", views.index, name="explorer_index"),
    path("records/", views.query_records, name="query_records"),
    path("record/<int:transaction_id>", views.edit_record, name="edit_record"),
+   path("reports/", views.monthly_reports, name="explorer_monthly_reports"),
    path("graphs/", views.teapot, name="explorer_graphs"),
    path("trends/", views.teapot, name="explorer_trends"),
    path("progress/", views.teapot, name="explorer_progress"),
