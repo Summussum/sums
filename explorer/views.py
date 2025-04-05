@@ -83,7 +83,9 @@ def edit_record(request, transaction_id):
 
 @login_required
 def monthly_reports(request):
-    expense_totals = Transactions.objects.filter(user=request.user).select_related("budget_id__category_display").values("budget_id").annotate(Sum("amount",output_field=FloatField()))
+    expense_totals = Transactions.objects.filter(user=request.user).values("budget_id", "budget__category_display").annotate(Sum("amount"))
+    for entry in expense_totals:
+        entry["amount__sum"] = round(float(entry["amount__sum"]), 2)
     return render(request, "Explore/monthly_reports.html", context={"expenses": expense_totals})
 
 

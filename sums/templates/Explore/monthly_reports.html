@@ -22,21 +22,15 @@
 
 
         <br><br>
-        <p>{{expenses}}</p>
-        <p>
-            {% for category in expenses %}
-            {{category.amount__sum}}
-            {% empty %}
-            There is nothing here!
-            {% endfor %}
-        </p>
 
-        <table id="monthly_reports_table">
+
+
+        <table id="monthly_reports_table" class="center_table">
             <thead>
                 <tr>
                 {% for category in expenses %}
                     <th>
-                        {{category.budget_id.category_display}}
+                        {{category.budget__category_display}}
                     </th>
                 {% endfor %}
                 </tr>
