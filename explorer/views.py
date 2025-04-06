@@ -118,7 +118,7 @@ def monthly_reports(request):
                 else:
                     datum["budget_amount"] = 0.00
                 datum["subtotal"] = subtotal
-                datum["diff"] = subtotal + datum["budget_amount"]
+                datum["diff"] = round(subtotal + datum["budget_amount"], 2)
                 datum["diff_color"] = "black"
                 if datum["diff"] < 0:
                     datum["diff_color"] = "red"
