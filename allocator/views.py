@@ -18,13 +18,17 @@ def index(request):
 @login_required
 def create_budget_category(request):
     new_category_display = request.POST.get("category_display")
+    new_category_name = slugify(new_category_display)
+    amount = request.POST.get("amount")
+    if request.POST.get("annual"):
+        annual_budget=True
+    else:
+        annual_budget=False
     if new_category_display == "":
         html = render_block_to_string("Allocate/error_partials.html", "no_category_name", request=request)
         response = HttpResponse(html)
         response["HX-Retarget"] = "#error_message"
         return response
-    new_category_name = slugify(new_category_display)
-    amount = request.POST.get("amount")
     if amount == "" or is_float(amount) == False:
         html = render_block_to_string("Allocate/error_partials.html", "no_amount", request=request)
         response = HttpResponse(html)
@@ -35,13 +39,9 @@ def create_budget_category(request):
         response = HttpResponse(html)
         response["HX-Retarget"] = "#error_message"
         return response
-    else:
-        if request.POST.get("annual"):
-            new_budget = Budgets(user=request.user, category_name=new_category_name, category_display=new_category_display,annual_budget=amount)
-        else:
-            new_budget = Budgets(user=request.user,category_name=new_category_name,category_display=new_category_display,monthly_budget=amount)
-        new_budget.save()
-        return display_active_budget(request)
+    new_budget = Budgets(user=request.user, category_name=new_category_name, category_display=new_category_display, budget_amount=request.POST.get("amount"), annual_budget=annual_budget)
+    new_budget.save()
+    return display_active_budget(request)
 
 @login_required
 def display_active_budget(request):
@@ -58,62 +58,57 @@ def display_active_budget(request):
 def allocate(request, category_name):
     if request.method == 'GET':
         budget = Budgets.objects.filter(category_name=category_name, user=request.user).first()
-        if budget.monthly_budget:
-            amount = budget.monthly_budget
+        if budget.budget_amount:
+            amount = budget.budget_amount
         else:
             amount = budget.annual_budget
         html = render_block_to_string("Allocate/allocator.html", "inline_editor", context={"item": budget, "amount": amount}, request=request)
         return HttpResponse(html)
 
     elif request.method == 'POST':
-
         new_category_display = request.POST.get("category_display")
+        new_category_name = slugify(new_category_display)
+        amount = request.POST.get("amount")
+        # error checks
         if new_category_display == "":
             html = render_block_to_string("Allocate/error_partials.html", "no_category_name", request=request)
             response = HttpResponse(html)
             response["HX-Retarget"] = f"#name_in_use{category_name}"
             response["HX-Reswap"] = "innerHTML"
             return response
-        new_category_name = slugify(new_category_display)
-        amount = request.POST.get("amount")
         if amount == "" or is_float(amount) == False:
             html = render_block_to_string("Allocate/error_partials.html", "no_amount", request=request)
             response = HttpResponse(html)
             response["HX-Retarget"] = f"#name_in_use{category_name}"
             response["HX-Reswap"] = "innerHTML"
             return response
-        if Budgets.objects.filter(category_name=new_category_name).exists() and new_category_name != category_name:
+        if Budgets.objects.filter(category_name=new_category_name, user=request.user).exists() and new_category_name != category_name:
             html = render_block_to_string("Allocate/error_partials.html", "already_exists", request=request)
             response = HttpResponse(html)
             response["HX-Retarget"] = f"#name_in_use{category_name}"
             response["HX-Reswap"] = "innerHTML"
             return response
+        # edit budget
+        instance = Budgets.objects.filter(category_name=category_name).first()
+        if request.POST.get("annual"):
+            instance.annual_budget = True
         else:
-            if request.POST.get("annual"):
-                 new_budget = Budgets(user=request.user,category_name=new_category_name,category_display=new_category_display,annual_budget=amount)
-            else:
-                new_budget = Budgets(user=request.user,category_name=new_category_name, category_display=new_category_display,monthly_budget=amount)
-            
-            instance = Budgets.objects.filter(category_name=category_name)
-            instance.delete()
-            new_budget.save()
-            budget = Budgets.objects.filter(category_name=new_budget.category_name).first()
-            context = {"item": budget}
-            html = render_block_to_string("Allocate/allocator.html", "data", context=context, request=request)
-            return HttpResponse(html)
+            instance.annual_budget = False
+        instance.category_display = new_category_display
+        instance.category_name = new_category_name
+        instance.budget_amount = amount
+        instance.save()
+        context = {"item": instance}
+        html = render_block_to_string("Allocate/allocator.html", "data", context=context, request=request)
+        return HttpResponse(html)
 
 
     elif request.method == 'DELETE':
-        instance = Budgets.objects.filter(category_name=category_name)
-        budget = instance.first()
-        if budget.monthly_budget:
-            amount = budget.monthly_budget
-        elif budget.annual_budget:
-            amount = budget.annual_budget
-        else:
-            amount = 0
-        instance.delete()
-        html = f"<tr class='deletion'><td></td><td></td><td>Category named {category_name}: ${amount} has successfully been deleted.</td><td></td><td></td></tr>"
+        budget = Budgets.objects.filter(category_name=category_name).first()
+        category_display = budget.category_display
+        amount = budget.budget_amount
+        budget.delete()
+        html = f"<tr class='deletion'><td colspan='5'>Category named {category_display}: ${amount} has successfully been deleted.</td></tr>"
         return HttpResponse(html)
 
 @login_required

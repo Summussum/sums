@@ -20,8 +20,8 @@ def index(request):
     budget_options = Budgets.objects.filter(user=request.user).values()
     options = []
     for item in budget_options:
-        if item['monthly_budget'] is not None:
-            item['monthly_budget'] = float(item['monthly_budget'])
+        if item['budget_amount'] is not None:
+            item['budget_amount'] = float(item['budget_amount'])
         if item['annual_budget'] is not None:
             item['annual_budget'] = float(item['annual_budget'])
         options.append(item)
@@ -52,8 +52,8 @@ def new_target(request):
     budget_options = Budgets.objects.filter(user=request.user).values()
     options = []
     for item in budget_options:
-        if item['monthly_budget'] is not None:
-            item['monthly_budget'] = float(item['monthly_budget'])
+        if item['budget_amount'] is not None:
+            item['budget_amount'] = float(item['budget_amount'])
         if item['annual_budget'] is not None:
             item['annual_budget'] = float(item['annual_budget'])
         options.append(item)

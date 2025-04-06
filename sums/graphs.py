@@ -14,9 +14,9 @@ def return_pie(user_id):
     total = 0
     budgets = Budgets.objects.filter(user_id=user_id)
     for object in budgets:
-        labels.append(f"{object.category_display}: ${object.monthly_budget}")
-        amounts.append(object.monthly_budget)
-        total += object.monthly_budget
+        labels.append(f"{object.category_display}: ${object.budget_amount}")
+        amounts.append(object.budget_amount)
+        total += object.budget_amount
 
     df = {"labels": labels, "amounts": amounts}
 

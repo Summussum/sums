@@ -12,7 +12,7 @@
             <tr>
                 <th></th>
                 <th>Category Name</th>
-                <th>Monthly Budget</th>
+                <th>Budget Amount</th>
                 <th>Yearly Budget</th>
                 <th></th>
             </tr>
@@ -25,8 +25,8 @@
                     <img id="{{item.category_name}}_edit_loading" class="htmx-indicator" src="/static/loading.svg">
                 </td>
                 <td>{{ item.category_display }}</td>
-                <td>${{ item.monthly_budget }}</td>
-                <td>${{ item.annual_budget }}</td>
+                <td>${{ item.budget_amount }}</td>
+                <td>{{ item.annual_budget }}</td>
                 <td>
                     <button hx-delete="/allocator/{{item.category_name}}" hx-target="#{{item.category_name}}" hx-swap="outerHTML" hx-indicator="#{{item.category_name}}_del_loading">Delete</button>
                     <img id="{{item.category_name}}_del_loading" class="htmx-indicator" src="/static/loading.svg">

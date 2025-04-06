@@ -26,8 +26,9 @@ class Budgets(models.Model):
     user = models.ForeignKey(User, models.CASCADE)
     category_name = models.TextField()
     category_display = models.TextField()
-    monthly_budget = models.DecimalField(max_digits=100, decimal_places=2, blank=True, null=True)
-    annual_budget = models.DecimalField(max_digits=100, decimal_places=2, blank=True, null=True)
+    budget_amount = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
+    annual_budget = models.BooleanField(default=False)
+    keywords = models.JSONField(null=True, blank=True)
 
 
 
@@ -41,6 +42,7 @@ class Transactions(models.Model):
     recurring = models.BooleanField(blank=True, null=True)
     user = models.ForeignKey(User, models.CASCADE)
     account = models.ForeignKey(Accounts, models.CASCADE)
+    auto_assigned = models.BooleanField(default=False)
     
 
 
@@ -51,9 +53,3 @@ class Snapshots(models.Model):
     snapshot_month = models.SmallIntegerField()
     snapshot_budget = models.JSONField()
     snapshot_expenses = models.JSONField()
-
-
-
-
-
-# INSERT INTO User (username, "password", email) VALUES ('test', 'admin123', 'testing@testing.com');

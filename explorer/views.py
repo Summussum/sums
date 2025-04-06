@@ -27,8 +27,8 @@ def query_records(request):
     budget_options = budgets.values()
     options = []
     for item in budget_options:
-        if item['monthly_budget'] is not None:
-            item['monthly_budget'] = float(item['monthly_budget'])
+        if item['budget_amount'] is not None:
+            item['budget_amount'] = float(item['budget_amount'])
         if item['annual_budget'] is not None:
             item['annual_budget'] = float(item['annual_budget'])
         options.append(item)
@@ -88,7 +88,7 @@ def monthly_reports(request):
     total_budget = 0.00
     ledger = {}
     for budget in budgets:
-        budget_float = float(budget.monthly_budget)
+        budget_float = float(budget.budget_amount)
         ledger[budget.category_display] = budget_float
         total_budget += budget_float
     records_query = Transactions.objects.filter(user=request.user)
@@ -110,18 +110,17 @@ def monthly_reports(request):
             if not expense_query:
                 continue
             for entry in expense_query:
-                datum = {}
                 subtotal = round(float(entry["amount__sum"]), 2)
-                datum["category_display"] = entry["budget__category_display"]
-                if entry["budget__category_display"]:
-                    datum["budget_amount"] = ledger[entry["budget__category_display"]]
+                category_display = entry["budget__category_display"]
+                if category_display:
+                    budget_amount = ledger[category_display]
                 else:
-                    datum["budget_amount"] = 0.00
-                datum["subtotal"] = subtotal
-                datum["diff"] = round(subtotal + datum["budget_amount"], 2)
-                datum["diff_color"] = "black"
-                if datum["diff"] < 0:
-                    datum["diff_color"] = "red"
+                    budget_amount = 0.00
+                diff = round(subtotal + budget_amount, 2)
+                diff_color = "black"
+                if diff < 0:
+                    diff_color = "red"
+                datum = {"category_display": category_display, "budget_amount": budget_amount, "subtotal": subtotal, "diff": diff, "diff_color": diff_color}
                 report["data"].append(datum)
                 report["total_expenses"] += subtotal
             report["total_expenses"] = round(report["total_expenses"], 2)
