@@ -23,28 +23,30 @@
 
         <br><br>
 
-
-
-        <table id="monthly_reports_table" class="center_table">
+        {% for report in expense_list %}
+        <table id="report_{{report.month}}_{{report.year}}" class="center_table">
+            <caption>Totals spent in {{report.month}}, {{report.year}}</caption>
             <thead>
                 <tr>
-                {% for category in expenses %}
-                    <th>
-                        {{category.budget__category_display}}
-                    </th>
-                {% endfor %}
+                    <th>Budget</th>
+                    <th>Expenses</th>
                 </tr>
             </thead>
             <tbody>
+                {% for key, value in report.data.items %}
                 <tr>
-                {% for category in expenses %}
-                    <td>
-                        {{category.amount__sum}}
-                    </td>
+                    <td>{{key}}</td>
+                    <td>{{value}}</td>
+                </tr>
                 {% endfor %}
+                <tr>
+                    <td>Total:</td>
+                    <td>{{report.total_expenses}}</td>
                 </tr>
             </tbody>
         </table>
+        <br>
+        {% endfor %}
 
 
 
