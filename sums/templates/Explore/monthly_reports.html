@@ -28,20 +28,26 @@
             <caption>Totals spent in {{report.month}}, {{report.year}}</caption>
             <thead>
                 <tr>
+                    <th>Category</th>
                     <th>Budget</th>
                     <th>Expenses</th>
+                    <th>Variance</th>
                 </tr>
             </thead>
             <tbody>
-                {% for key, value in report.data.items %}
+                {% for datum in report.data %}
                 <tr>
-                    <td>{{key}}</td>
-                    <td>{{value}}</td>
+                    <td>{{datum.category_display}}</td>
+                    <td>{{datum.budget_amount}}</td>
+                    <td>{{datum.subtotal}}</td>
+                    <td><div style="color: {{datum.diff_color}};">{{datum.diff}}</div></td>
                 </tr>
                 {% endfor %}
                 <tr>
-                    <td>Total:</td>
+                    <td>Totals:</td>
+                    <td>{{total_budget}}</td>
                     <td>{{report.total_expenses}}</td>
+                    <td><div style="color: {{report.diff_color}};">{{report.total_diff}}</td>
                 </tr>
             </tbody>
         </table>

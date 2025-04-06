@@ -84,6 +84,13 @@ def edit_record(request, transaction_id):
 
 @login_required
 def monthly_reports(request):
+    budgets = Budgets.objects.filter(user=request.user)
+    total_budget = 0.00
+    ledger = {}
+    for budget in budgets:
+        budget_float = float(budget.monthly_budget)
+        ledger[budget.category_display] = budget_float
+        total_budget += budget_float
     records_query = Transactions.objects.filter(user=request.user)
     years_list = records_query.dates('transaction_date', 'year')
     years = []
@@ -94,23 +101,37 @@ def monthly_reports(request):
     for month in months_list:
         months.append(month.strftime("%m"))
     expense_list = []
-    logger = logging.getLogger(__name__)
-    logger.error(f"First month: {months[0]}, Months List: {months}")
+    #logger = logging.getLogger(__name__)
+    #logger.error(f"First month: {months[0]}, Months List: {months}")
     for year in years:
         for month in months:
-            report = {"year": year, "month": month, "data": {}, "total_expenses": 0.00}
+            report = {"year": year, "month": month, "data": [], "total_expenses": 0.00, "total_diff": 0.00, "diff_color": "black"}
             expense_query = Transactions.objects.filter(user=request.user, transaction_date__year=year, transaction_date__month=month).values("budget_id", "budget__category_display").annotate(Sum("amount"))
             if not expense_query:
                 continue
             for entry in expense_query:
+                datum = {}
                 subtotal = round(float(entry["amount__sum"]), 2)
-                report["data"][entry["budget__category_display"]] = subtotal
+                datum["category_display"] = entry["budget__category_display"]
+                if entry["budget__category_display"]:
+                    datum["budget_amount"] = ledger[entry["budget__category_display"]]
+                else:
+                    datum["budget_amount"] = 0.00
+                datum["subtotal"] = subtotal
+                datum["diff"] = subtotal + datum["budget_amount"]
+                datum["diff_color"] = "black"
+                if datum["diff"] < 0:
+                    datum["diff_color"] = "red"
+                report["data"].append(datum)
                 report["total_expenses"] += subtotal
             report["total_expenses"] = round(report["total_expenses"], 2)
+            report["total_diff"] = round((total_budget + report["total_expenses"]), 2)
+            if report["total_diff"] < 0:
+                report["diff_color"] = "red"
             expense_list.append(report)
-            logger = logging.getLogger(__name__)
-            logger.error(f"report: {report}, expenses: {expense_list}")
-    return render(request, "Explore/monthly_reports.html", context={"expense_list": expense_list})
+            #logger = logging.getLogger(__name__)
+            #logger.error(f"report: {report}, expenses: {expense_list}")
+    return render(request, "Explore/monthly_reports.html", context={"expense_list": expense_list, "total_budget": round(total_budget, 2)})
 
 
 def teapot(request):
