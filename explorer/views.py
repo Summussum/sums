@@ -98,14 +98,17 @@ def monthly_reports(request):
         years.append(year.strftime("%Y"))
     months_list = records_query.dates('transaction_date', 'month')
     months = []
+    month_strings = []
     for month in months_list:
         months.append(month.strftime("%m"))
+        month_strings.append(month.strftime("%b"))
+    month_strings = month_strings[::-1]
     expense_list = []
     #logger = logging.getLogger(__name__)
     #logger.error(f"First month: {months[0]}, Months List: {months}")
-    for year in years:
-        for month in months:
-            report = {"year": year, "month": month, "data": [], "total_expenses": 0.00, "total_diff": 0.00, "diff_color": "black"}
+    for year in years[::-1]:
+        for i, month in enumerate(months[::-1]):
+            report = {"year": year, "month": month, "month_string": month_strings[i], "data": [], "total_expenses": 0.00, "total_diff": 0.00, "diff_color": "black"}
             expense_query = Transactions.objects.filter(user=request.user, transaction_date__year=year, transaction_date__month=month).values("budget_id", "budget__category_display").annotate(Sum("amount"))
             if not expense_query:
                 continue

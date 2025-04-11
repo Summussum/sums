@@ -25,7 +25,7 @@
 
         {% for report in expense_list %}
         <table id="report_{{report.month}}_{{report.year}}" class="center_table">
-            <caption>Totals spent in {{report.month}}, {{report.year}}</caption>
+            <caption style="font-weight: bold; text-decoration: underline; padding-bottom: .5em;">{{report.month_string}} {{report.year}}</caption>
             <thead>
                 <tr>
                     <th>Category</th>
@@ -51,7 +51,7 @@
                 </tr>
             </tbody>
         </table>
-        <br>
+        <br><br>
         {% endfor %}
 
 
