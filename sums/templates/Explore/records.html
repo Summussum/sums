@@ -20,9 +20,10 @@
 
         <br>
         <h3>Filters</h3>
-        <div id="records_query1">
+        <form id="records_query1">
                 <label for name="year">Year:</label>
                         <select name="year">
+                                <option value="all">All</option>
                                 <option value="{{dates.current_year}}">Current</option>
                                 <option value="{{dates.previous_year}}">Previous</option>
                                 {% for year in dates.years %}
@@ -31,6 +32,7 @@
                         </select>
                 <label for name="month">Month:</label>
                         <select name="month">
+                                <option value="all">All</option>
                                 <option value="{{dates.previous_month}}">Previous</option>
                                 <option value="{{dates.current_month}}">Current</option>
                                 <option value="three">Prev Three</option>
@@ -47,16 +49,32 @@
                                 <option value="11">11-November</option>
                                 <option value="12">12-December</option>
                         </select>
+                <label for name="category_select">Budget Category:</label>
+                        <select name="category_select">
+                                <option value="all">All</option>
+                                <option value="uncategorized">Uncategorized</option>
+                                {% for option in options %}
+                                <option value="{{option.category_name}}">{{option.category_display}}</option>
+                                {% endfor %}
+                        </select>
                 <button hx-post="/explorer/query1/" hx-target="#record_table" hx-swap="outerHTML" hx-include="#records_query1">Search</button>
-        </div>
+        </form>
+        
         <p>custom range:</p>
-        <div id="records_query2">
+        <form id="records_query2">
                 <label for name="start_date">Start Date:</label>
-                <input type="date" name="start_date">
+                        <input type="date" name="start_date">
                 <label for name="end_date">End Date:</label>
-                <input type="date" name="end_date">
+                        <input type="date" name="end_date">
+                <label for name="category_select">Budget Category:</label>
+                        <select name="category_select">
+                                <option value="all">All</option>
+                                {% for option in options %}
+                                <option value="{{option.category_name}}">{{option.category_display}}</option>
+                                {% endfor %}
+                        </select>
                 <button hx-get="/explorer/query2/" hx-target="#record_table" hx-swap="outerHTML" hx-includes="#records_query2">Search</button>
-        </div>
+        </form>
         <br><br>
         <table class="center_table" id="record_table">
                 <caption>RECORDS: <div id="date_query">{{query_string}}</div></caption>

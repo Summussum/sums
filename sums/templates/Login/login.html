@@ -4,7 +4,7 @@
 <div id="userform">Login:<br>
     <form hx-post="/login_submit/" hx-target="#welcome_text" hx-swap="outerHTML" hx-indicator="#login_loading">
         {% csrf_token %}
-        <label for name="username">Username: </label>
+        <label for name="user_name">Username: </label>
         <input type="text" id="username" name="user_name"><br>
         <label for name="password">Password:</label>
         <input type="password" id="password" name="password"><br><br>
@@ -23,7 +23,7 @@
 <div id="userform">Register:<br>
     <form hx-post="/register_submit/" hx-target="#welcome_text" hx-swap="outerHTML" hx-indicator="#register_loading">
         {% csrf_token %}
-        <label for name="username">Username: </label>
+        <label for name="user_name">Username: </label>
         <input type="text" id="username" name="user_name"><br>
         <label for name="password">Password:</label>
         <input type="password" id="password" name="password"><br>

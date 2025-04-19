@@ -5,7 +5,6 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from . import models
-from sums.models import User
 from render_block import render_block_to_string
 from django_htmx.http import HttpResponseClientRedirect
 from django.shortcuts import redirect
@@ -27,7 +26,7 @@ def sums_entrypoint(request):
     return render(request, "Login/index.html")
 
 def sums_login_form(request):
-    html = render_block_to_string("Login/login.html", "login")
+    html = render_block_to_string("Login/login.html", "login", request=request)
     return HttpResponse(html)
 
 def sums_login_submit(request):
@@ -40,12 +39,12 @@ def sums_login_submit(request):
         response["Hx-Redirect"] = "/"
         return response
     else:
-        html = render_block_to_string("Login/welcome_text.html", "nonlogin")
+        html = render_block_to_string("Login/welcome_text.html", "nonlogin", request=request)
         return HttpResponse(html)
 
 
 def sums_register_form(request):
-    html = render_block_to_string("Login/login.html", "register")
+    html = render_block_to_string("Login/login.html", "register", request=request)
     return HttpResponse(html)
     
 def sums_register_submit(request):
@@ -57,9 +56,9 @@ def sums_register_submit(request):
     new_user = User.objects.filter(username=new_username).first()
     if new_user:
         context = {"user": new_user}
-        html = render_block_to_string("Login/welcome_text.html", "registered", context=context)
+        html = render_block_to_string("Login/welcome_text.html", "registered", context=context, request=request)
     else:
-        html = render_block_to_string("Login/welcome_text.html", "nonregistered")
+        html = render_block_to_string("Login/welcome_text.html", "nonregistered", request=request)
     return HttpResponse(html)
 
 def sums_logout(request):

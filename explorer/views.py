@@ -51,14 +51,22 @@ def query_records(request):
 
 @login_required
 def query1(request):
+    category_name = request.POST.get("category_select")
+    category_selected = ""
     year = request.POST.get("year")
     month = request.POST.get("month")
     query_string = f"{month}/{year}"
     options = request.session["budget_options"]
     budgets = Budgets.objects.filter(user=request.user)
     budget_select = render_block_to_string("Explore/partials.html", "budget_select", context={"budgets": budgets})
-    records = Transactions.objects.filter(user=request.user, transaction_date__month=month, transaction_date__year=year).values('account__nickname', 'budget__category_name', 'budget__category_display', 'transaction_id', 'amount', 'transaction_date', 'transaction_description', 'budget', 'note', 'recurring', 'user', 'account')
-    html = render_block_to_string("Explore/partials.html", "record_table", context={"budget_select": budget_select, "records": records, "query_string": query_string, "options": options}, request=request)
+    filters = {"user": request.user, "transaction_date__year": year, "transaction_date__month": month}
+    if category_name == "uncategorized":
+        filters["budget_id__isnull"] = True
+    elif category_name != "all":
+        filters["budget"] = Budgets.objects.filter(user=request.user, category_name=category_name).first()
+        category_selected = filters["budget"].category_display + "  "
+    records = Transactions.objects.filter(**filters).values('account__nickname', 'budget__category_name', 'budget__category_display', 'transaction_id', 'amount', 'transaction_date', 'transaction_description', 'budget', 'note', 'recurring', 'user', 'account')
+    html = render_block_to_string("Explore/partials.html", "record_table", context={"budget_select": budget_select, "records": records, "query_string": query_string, "options": options, "category_selected": category_selected}, request=request)
     return HttpResponse(html)
 
 def query2(request):
