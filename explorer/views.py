@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from render_block import render_block_to_string
 from django.contrib.auth.decorators import login_required
@@ -6,7 +6,7 @@ from sums.models import Transactions, Budgets
 from http import HTTPStatus
 from datetime import datetime, date
 from django.db.models import Sum, FloatField
-import logging
+import logging, json
 
 
 
@@ -45,6 +45,7 @@ def query_records(request):
                "previous_month": str(int(datetime.now().strftime("%m"))-1).zfill(2),
                "years": years
                }
+    request.session["records_query_context"] = json.dumps({"dates": dates, "options": options})
     response = render(request, "Explore/records.html", context={"records": records, "dates": dates, "options": options})
     response["HX-Push-Url"] = request.path
     return response
@@ -59,18 +60,42 @@ def query1(request):
     options = request.session["budget_options"]
     budgets = Budgets.objects.filter(user=request.user)
     budget_select = render_block_to_string("Explore/partials.html", "budget_select", context={"budgets": budgets})
-    filters = {"user": request.user, "transaction_date__year": year, "transaction_date__month": month}
+    filters = {"user": request.user}
+    if year != "all":
+        filters["transaction_date__year"] = year
+    if month != "all":
+        filters["transaction_date__month"] = month
     if category_name == "uncategorized":
         filters["budget_id__isnull"] = True
     elif category_name != "all":
         filters["budget"] = Budgets.objects.filter(user=request.user, category_name=category_name).first()
-        category_selected = filters["budget"].category_display + "  "
+        category_selected = filters["budget"].category_display + ",  "
     records = Transactions.objects.filter(**filters).values('account__nickname', 'budget__category_name', 'budget__category_display', 'transaction_id', 'amount', 'transaction_date', 'transaction_description', 'budget', 'note', 'recurring', 'user', 'account')
     html = render_block_to_string("Explore/partials.html", "record_table", context={"budget_select": budget_select, "records": records, "query_string": query_string, "options": options, "category_selected": category_selected}, request=request)
     return HttpResponse(html)
 
+@login_required
 def query2(request):
-    pass
+    category_name = request.POST.get("category_select")
+    category_selected = ""
+    start_date = request.POST.get("start_date")
+    start_date_object = datetime.strptime(start_date, "%Y-%m-%d")
+    end_date = request.POST.get("end_date")
+    end_date_object = datetime.strptime(end_date, "%Y-%m-%d")
+    query_string = f"{start_date_object.strftime("%d %b %Y")} to {end_date_object.strftime("%d %b %Y")} inclusive"
+    options = request.session["budget_options"]
+    budgets = Budgets.objects.filter(user=request.user)
+    budget_select = render_block_to_string("Explore/partials.html", "budget_select", context={"budgets": budgets})
+    filters = {"user": request.user, "transaction_date__gte": start_date, "transaction_date__lte": end_date}
+    if category_name == "uncategorized":
+        filters["budget_id__isnull"] = True
+    elif category_name != "all":
+        filters["budget"] = Budgets.objects.filter(user=request.user, category_name=category_name).first()
+        category_selected = filters["budget"].category_display + ",  "
+    records = Transactions.objects.filter(**filters).values('account__nickname', 'budget__category_name', 'budget__category_display', 'transaction_id', 'amount', 'transaction_date', 'transaction_description', 'budget', 'note', 'recurring', 'user', 'account')
+    html = render_block_to_string("Explore/partials.html", "record_table", context={"budget_select": budget_select, "records": records, "query_string": query_string, "options": options, "category_selected": category_selected}, request=request)
+    return HttpResponse(html)
+
 
 @login_required
 def edit_record(request, transaction_id):
@@ -142,6 +167,18 @@ def monthly_reports(request):
             #logger = logging.getLogger(__name__)
             #logger.error(f"report: {report}, expenses: {expense_list}")
     return render(request, "Explore/monthly_reports.html", context={"expense_list": expense_list, "total_budget": round(total_budget, 2)})
+
+@login_required
+def filter_form(request, query_select):
+    if query_select == 1:
+        html = render_block_to_string("Explore/partials.html", "filter_form_1", context=json.loads(request.session["records_query_context"]))
+        return HttpResponse(html)
+    elif query_select == 2:
+        html = render_block_to_string("Explore/partials.html", "filter_form_2", context={"options": request.session["budget_options"]})
+        return HttpResponse(html)
+    response = HttpResponse()
+    response["HX-Redirect"] = "/explorer/records/"
+    return response
 
 
 def teapot(request):

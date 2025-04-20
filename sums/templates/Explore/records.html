@@ -20,6 +20,7 @@
 
         <br>
         <h3>Filters</h3>
+        <div id="filter_form">
         <form id="records_query1">
                 <label for name="year">Year:</label>
                         <select name="year">
@@ -59,22 +60,12 @@
                         </select>
                 <button hx-post="/explorer/query1/" hx-target="#record_table" hx-swap="outerHTML" hx-include="#records_query1">Search</button>
         </form>
-        
-        <p>custom range:</p>
-        <form id="records_query2">
-                <label for name="start_date">Start Date:</label>
-                        <input type="date" name="start_date">
-                <label for name="end_date">End Date:</label>
-                        <input type="date" name="end_date">
-                <label for name="category_select">Budget Category:</label>
-                        <select name="category_select">
-                                <option value="all">All</option>
-                                {% for option in options %}
-                                <option value="{{option.category_name}}">{{option.category_display}}</option>
-                                {% endfor %}
-                        </select>
-                <button hx-get="/explorer/query2/" hx-target="#record_table" hx-swap="outerHTML" hx-includes="#records_query2">Search</button>
-        </form>
+        <br>
+        <button hx-get="/explorer/filter_form/2" hx-swap="outerHTML" hx-target="#filter_form">Filter by Custom Dates</button>
+
+        </div>
+
+
         <br><br>
         <table class="center_table" id="record_table">
                 <caption>RECORDS: <div id="date_query">{{query_string}}</div></caption>

@@ -76,3 +76,74 @@
         </tbody>
 </table>
 {% endblock %}
+
+
+{% block filter_form_2 %}
+<div id="filter_form">
+        <p>custom range:</p>
+        <form id="records_query2">
+                <label for name="start_date">Start Date:</label>
+                        <input type="date" name="start_date">
+                <label for name="end_date">End Date:</label>
+                        <input type="date" name="end_date">
+                <label for name="category_select">Budget Category:</label>
+                        <select name="category_select">
+                                <option value="all">All</option>
+                                <option value="uncategorized">Uncategorized</option>
+                                {% for option in options %}
+                                <option value="{{option.category_name}}">{{option.category_display}}</option>
+                                {% endfor %}
+                        </select>
+                <button hx-post="/explorer/query2/" hx-target="#record_table" hx-swap="outerHTML" hx-includes="#records_query2">Search</button>
+        </form>
+        <br>
+        <button hx-get="/explorer/filter_form/1" hx-swap="outerHTML" hx-target="#filter_form">Filter by Month</button>
+</div>
+{% endblock %}
+
+{% block filter_form_1 %}
+<div id="filter_form">
+        <form id="records_query1">
+                <label for name="year">Year:</label>
+                        <select name="year">
+                                <option value="all">All</option>
+                                <option value="{{dates.current_year}}">Current</option>
+                                <option value="{{dates.previous_year}}">Previous</option>
+                                {% for year in dates.years %}
+                                        <option value="{{year}}">{{year}}</option>
+                                {% endfor %}
+                        </select>
+                <label for name="month">Month:</label>
+                        <select name="month">
+                                <option value="all">All</option>
+                                <option value="{{dates.previous_month}}">Previous</option>
+                                <option value="{{dates.current_month}}">Current</option>
+                                <option value="three">Prev Three</option>
+                                <option value="01">01-January</option>
+                                <option value="02">02-February</option>
+                                <option value="03">03-March</option>
+                                <option value="04">04-April</option>
+                                <option value="05">05-May</option>
+                                <option value="06">06-June</option>
+                                <option value="07">07-July</option>
+                                <option value="08">08-August</option>
+                                <option value="09">09-September</option>
+                                <option value="10">10-October</option>
+                                <option value="11">11-November</option>
+                                <option value="12">12-December</option>
+                        </select>
+                <label for name="category_select">Budget Category:</label>
+                        <select name="category_select">
+                                <option value="all">All</option>
+                                <option value="uncategorized">Uncategorized</option>
+                                {% for option in options %}
+                                <option value="{{option.category_name}}">{{option.category_display}}</option>
+                                {% endfor %}
+                        </select>
+                <button hx-post="/explorer/query1/" hx-target="#record_table" hx-swap="outerHTML" hx-include="#records_query1">Search</button>
+        </form>
+        <br>
+        <button hx-get="/explorer/filter_form/2" hx-swap="outerHTML" hx-target="#filter_form">Filter by Custom Dates</button>
+
+        </div>
+{% endblock %}
