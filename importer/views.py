@@ -37,7 +37,25 @@ def csv_file_upload(request):
     request.session["csv_files"] = files
     if request.POST.get("nickname") == "new":
         first_line = files[0].split("\n")[0].split(",")
-        sample_lines = [line.split(",") for line in files[0].split("\n")[1:32:6]]
+        
+        pre_sample_lines = files[0].split("\n")[1:32:6]
+        sample_lines = []
+        for line in pre_sample_lines:
+            in_quotes = False
+            new_line = []
+            cell = ""
+            for char in line:
+                if char == ',' and in_quotes == False:
+                    new_line.append(cell)
+                    cell = ""
+                    continue
+                elif char == '"':
+                    in_quotes = not in_quotes
+                    continue
+                cell += char
+            new_line.append(cell)
+            sample_lines.append(new_line)
+
         first_slugs = [slugify(header) for header in first_line]
         auto_amount, auto_date, auto_description, auto_deposits = "", "", "", ""
         for header in first_line[-1::-1]:
