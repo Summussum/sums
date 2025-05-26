@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from render_block import render_block_to_string
 from django.contrib.auth.decorators import login_required
+from sums.tools import get_query_pages, get_page_links
 from sums.models import Transactions, Budgets
 from http import HTTPStatus
 from datetime import datetime, date
@@ -10,14 +11,16 @@ import logging, json
 
 
 
+
+#Initiate logging
+logger = logging.getLogger(__name__)
+
+
+
 # Create your views here.
 @login_required
 def index(request):
-    budgets = Budgets.objects.filter(user=request.user)
-    budget_dict = {}
-    for budget in budgets:
-        budget_dict[budget.budget_id] = (budget.category_name, budget.category_display)
-    response = render(request, "Explore/index.html", context={"budget_select": str(budget_dict)})
+    response = render(request, "Explore/index.html", context={})
     response["HX-Push-Url"] = request.path
     return response
 
@@ -32,9 +35,18 @@ def query_records(request):
         if item['annual_budget'] is not None:
             item['annual_budget'] = float(item['annual_budget'])
         options.append(item)
+    request.session["category_selected"] = ""
     request.session["budget_options"] = options
+    request.session["records_query_string"] = ""
     records_query = Transactions.objects.filter(user=request.user)
     records = records_query.values('account__nickname', 'budget__category_display', 'budget__category_name', 'transaction_id', 'amount', 'transaction_date', 'transaction_description', 'budget', 'note', 'recurring', 'user', 'account')
+    for item in records:
+        item["transaction_date"] = item["transaction_date"].strftime('%b %d, %Y')
+    records_pages = get_query_pages(records, 40)
+    logger.error(len(records_pages))
+    #for record in records_pages:
+        #logger.error(record)
+    request.session["records_pages"] = json.dumps(records_pages)
     years_list = records_query.dates('transaction_date', 'year')
     years = []
     for year in years_list:
@@ -46,20 +58,22 @@ def query_records(request):
                "years": years
                }
     request.session["records_query_context"] = json.dumps({"dates": dates, "options": options})
-    response = render(request, "Explore/records.html", context={"records": records, "dates": dates, "options": options})
+    page_links = get_page_links(request, 1, "/explorer/records/")
+    response = render(request, "Explore/records.html", context={"records": records_pages[0], "dates": dates, "options": options, "page_num": 1, "page_count": len(records_pages), "page_links": page_links})
+    #response = render(request, "Explore/records.html", context={"records": records, "dates": dates, "options": options})
     response["HX-Push-Url"] = request.path
+    #logger.error(response)
     return response
 
 @login_required
 def query1(request):
     category_name = request.POST.get("category_select")
-    category_selected = ""
+    request.session["category_selected"] = ""
     year = request.POST.get("year")
     month = request.POST.get("month")
     query_string = f"{month}/{year}"
+    request.session["records_query_string"] = query_string
     options = request.session["budget_options"]
-    budgets = Budgets.objects.filter(user=request.user)
-    budget_select = render_block_to_string("Explore/partials.html", "budget_select", context={"budgets": budgets})
     filters = {"user": request.user}
     if year != "all":
         filters["transaction_date__year"] = year
@@ -69,31 +83,49 @@ def query1(request):
         filters["budget_id__isnull"] = True
     elif category_name != "all":
         filters["budget"] = Budgets.objects.filter(user=request.user, category_name=category_name).first()
-        category_selected = filters["budget"].category_display + ",  "
+        request.session["category_selected"] = filters["budget"].category_display + ",  "
     records = Transactions.objects.filter(**filters).values('account__nickname', 'budget__category_name', 'budget__category_display', 'transaction_id', 'amount', 'transaction_date', 'transaction_description', 'budget', 'note', 'recurring', 'user', 'account')
-    html = render_block_to_string("Explore/partials.html", "record_table", context={"budget_select": budget_select, "records": records, "query_string": query_string, "options": options, "category_selected": category_selected}, request=request)
+    for item in records:
+        item["transaction_date"] = item["transaction_date"].strftime('%b %d, %Y')
+    records_pages = get_query_pages(records, 40)
+    request.session["records_pages"] = json.dumps(records_pages)
+    page_links = get_page_links(request, 1, "/explorer/records/")
+    html = render_block_to_string("Explore/partials.html", "record_table", context={"records": records_pages[0], "query_string": query_string, "options": options, "category_selected": request.session["category_selected"], "page_links": page_links}, request=request)
+    #logger.error(html)
     return HttpResponse(html)
 
 @login_required
 def query2(request):
     category_name = request.POST.get("category_select")
-    category_selected = ""
+    request.session["category_selected"] = ""
     start_date = request.POST.get("start_date")
     start_date_object = datetime.strptime(start_date, "%Y-%m-%d")
     end_date = request.POST.get("end_date")
     end_date_object = datetime.strptime(end_date, "%Y-%m-%d")
     query_string = f"{start_date_object.strftime("%d %b %Y")} to {end_date_object.strftime("%d %b %Y")} inclusive"
+    request.session["records_query_string"] = query_string
     options = request.session["budget_options"]
-    budgets = Budgets.objects.filter(user=request.user)
-    budget_select = render_block_to_string("Explore/partials.html", "budget_select", context={"budgets": budgets})
     filters = {"user": request.user, "transaction_date__gte": start_date, "transaction_date__lte": end_date}
     if category_name == "uncategorized":
         filters["budget_id__isnull"] = True
     elif category_name != "all":
         filters["budget"] = Budgets.objects.filter(user=request.user, category_name=category_name).first()
-        category_selected = filters["budget"].category_display + ",  "
+        request.session["category_selected"] = filters["budget"].category_display + ",  "
     records = Transactions.objects.filter(**filters).values('account__nickname', 'budget__category_name', 'budget__category_display', 'transaction_id', 'amount', 'transaction_date', 'transaction_description', 'budget', 'note', 'recurring', 'user', 'account')
-    html = render_block_to_string("Explore/partials.html", "record_table", context={"budget_select": budget_select, "records": records, "query_string": query_string, "options": options, "category_selected": category_selected}, request=request)
+    for item in records:
+        item["transaction_date"] = item["transaction_date"].strftime('%b %d, %Y')
+    records_pages = get_query_pages(records, 40)
+    request.session["records_pages"] = json.dumps(records_pages)
+    page_links = get_page_links(request, 1, "/explorer/records/")
+    html = render_block_to_string("Explore/partials.html", "record_table", context={"records": records_pages[0], "query_string": query_string, "options": options, "category_selected": request.session["category_selected"], "page_links": page_links}, request=request)
+    return HttpResponse(html)
+
+def change_page(request, page_num):
+    page = json.loads(request.session["records_pages"])[page_num-1]
+    options = request.session["budget_options"]
+    query_string = request.session["records_query_string"]
+    page_links = get_page_links(request, page_num, "/explorer/records/")
+    html = render_block_to_string("Explore/partials.html", "record_table", context={"records": page, "query_string": query_string, "options": options, "category_selected": request.session["category_selected"], "page_links": page_links}, request=request)
     return HttpResponse(html)
 
 

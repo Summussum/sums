@@ -12,5 +12,6 @@ urlpatterns = [
    path("progress/", views.teapot, name="explorer_progress"),
    path("query1/", views.query1, name="records_query1"),
    path("query2/", views.query2, name="records_query2"),
-   path("filter_form/<int:query_select>", views.filter_form, name="explorer_filter_form")
+   path("filter_form/<int:query_select>", views.filter_form, name="explorer_filter_form"),
+   path("records/<int:page_num>", views.change_page, name="records_change_page")
 ]

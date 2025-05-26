@@ -6,13 +6,10 @@ services:
       - .:/sums_sums
     ports:
       - "8000:8000"
-    #command: sh -c "python3 manage.py makemigrations && python3 manage.py migrate && pip install -r sums_sums/requirements.txt && psql -U $POSTGRES_USER -d $POSTGRES_DB < expense_tracker.sql && gunicorn sums_sums.wsgi:application --bind 0.0.0.0:8000"
     command: sh -c "python3 manage.py makemigrations && python3 manage.py makemigrations sums && python3 manage.py migrate && gunicorn sums_sums.wsgi:application --bind 0.0.0.0:8000"
     env_file:
       - "./.env"
-    #post_start:
-    #  - command: sh -c "locate psql && psql -U $POSTGRES_USER -d $POSTGRES_DB < expense_tracker.sql"
-    #    user: root
+
     depends_on:
       - db
 
@@ -29,8 +26,5 @@ services:
     restart: always
     ports:
       - "5433:5432"
-    #volumes:
-    #  - ./sums_sums/expense_tracker.sql:/docker-entrypoint-initdb.d/expense_tracker.sql
 
-   # command: sh -c "psql -U $POSTGRES_USER -d $POSTGRES_DB < expense_tracker.sql"
 
