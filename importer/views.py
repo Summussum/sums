@@ -8,7 +8,11 @@ from sums.models import Budgets, User, Transactions, Accounts
 from django.template.defaultfilters import slugify
 from . import csv_transform
 from datetime import datetime
-import json
+import json, logging
+
+
+#Initiate logging
+logger = logging.getLogger(__name__)
 
 # Create your views here.
 @login_required
@@ -37,7 +41,6 @@ def csv_file_upload(request):
     request.session["csv_files"] = files
     if request.POST.get("nickname") == "new":
         first_line = files[0].split("\n")[0].split(",")
-        
         pre_sample_lines = files[0].split("\n")[1:32:6]
         sample_lines = []
         for line in pre_sample_lines:
@@ -81,14 +84,8 @@ def make_new_account(request):
         "amount": request.POST.get("amount"),
         "transaction_description": request.POST.get("transaction_description"),
         "deposits": request.POST.get("deposits"),
-        "notes": request.POST.get("additional")
+        "note": request.POST.get("additional")
         }
-    pop_list = []
-    for key in new_translator:
-        if new_translator[key] == "None":
-            pop_list.append(key)
-    for item in pop_list:
-        new_translator.pop(item)
     new_account = Accounts(
         nickname = request.POST.get("nickname"),
         bank = request.POST.get("bank"),
@@ -117,7 +114,7 @@ def csv_file_save(request):
         for f in files:
             file = csv_transform.Transformer(f, translator, date_format)
             for line in file.record:
-                entry = Transactions(amount=line["amount"], transaction_date=line["transaction_date"], transaction_description=line["transaction_description"], account=account, user=request.user)
+                entry = Transactions(amount=line["amount"], transaction_date=line["transaction_date"], transaction_description=line["transaction_description"], account=account, note=line["note"], user=request.user)
                 entry.save()
     if request.path == "/importer/new_account/":
         accounts = [account]

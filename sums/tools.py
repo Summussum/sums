@@ -8,6 +8,8 @@ def get_query_pages(values, page_size):
         pages.append(values[i:j])
         i += page_size
         j += page_size
+    if not pages:
+        pages.append([])
     return pages
 
 

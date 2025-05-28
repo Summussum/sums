@@ -55,8 +55,7 @@ def sums_register_submit(request):
     user.save()
     new_user = User.objects.filter(username=new_username).first()
     if new_user:
-        context = {"user": new_user}
-        html = render_block_to_string("Login/welcome_text.html", "registered", context=context, request=request)
+        html = render_block_to_string("Login/welcome_text.html", "registered", context={"username": new_username}, request=request)
     else:
         html = render_block_to_string("Login/welcome_text.html", "nonregistered", request=request)
     return HttpResponse(html)

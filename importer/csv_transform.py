@@ -1,4 +1,4 @@
-import csv, json
+import csv, json, logging
 from datetime import datetime
 from django import forms
 from dateutil.parser import parse
@@ -7,6 +7,9 @@ class UploadFileForm(forms.Form):
     title = forms.CharField()
     file = forms.FileField()
 
+
+#Initiate logging
+logger = logging.getLogger(__name__)
 
 class Transformer():
     def __init__(self, file, translator: dict, date_format: str):
@@ -25,8 +28,7 @@ class Transformer():
         reader = csv.DictReader(record.splitlines())
         record_list = []
         for line in reader:
-            
-            entry = dict([(fieldname, line[self.translator[fieldname]]) for fieldname in self.fieldnames])
+            entry = dict([(fieldname, "") if (not self.translator[fieldname] or self.translator[fieldname] is None) else (fieldname, line[self.translator[fieldname]]) for fieldname in self.fieldnames])
             record_list.append(entry)
         return record_list
     

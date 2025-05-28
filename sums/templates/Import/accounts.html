@@ -17,7 +17,7 @@
             <td>
                 <select name="transaction_date">
                     {{auto_date|safe|default:"hello"}}
-                    <option value="None">--None--</option>
+                    <option value="">--None--</option>
                     {% for slug in first_line %}
                     <option value="{{slug}}">{{slug}}</option>
                     {% endfor %}
@@ -26,7 +26,7 @@
             <td>
                 <select name="amount">
                     {{auto_amount|safe|default:"hello"}}
-                    <option value="None">--None--</option>
+                    <option value="">--None--</option>
                     {% for slug in first_line %}
                     <option value="{{slug}}">{{slug}}</option>
                     {% endfor %}
@@ -35,7 +35,7 @@
             <td>
                 <select name="transaction_description">
                     {{auto_description|safe|default:"hello"}}
-                    <option value="None">--None--</option>
+                    <option value="">--None--</option>
                     {% for slug in first_line %}
                     <option value="{{slug}}">{{slug}}</option>
                     {% endfor %}
@@ -44,7 +44,7 @@
             <td>
                 <select name="deposits">
                     {{auto_deposits|safe|default:"hello"}}
-                    <option value="None">--None--</option>
+                    <option value="">--None--</option>
                     {% for slug in first_line %}
                     <option value="{{slug}}">{{slug}}</option>
                     {% endfor %}
@@ -52,7 +52,7 @@
             </td>
             <td>
                 <select name="additional">
-                    <option value="None">--None--</option>
+                    <option value="">--None--</option>
                     {% for slug in first_line %}
                     <option value="{{slug}}">{{slug}}</option>
                     {% endfor %}

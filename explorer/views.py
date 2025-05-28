@@ -43,7 +43,7 @@ def query_records(request):
     for item in records:
         item["transaction_date"] = item["transaction_date"].strftime('%b %d, %Y')
     records_pages = get_query_pages(records, 40)
-    logger.error(len(records_pages))
+    #logger.error(len(records_pages))
     #for record in records_pages:
         #logger.error(record)
     request.session["records_pages"] = json.dumps(records_pages)
