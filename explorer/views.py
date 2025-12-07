@@ -39,7 +39,7 @@ def query_records(request):
     request.session["budget_options"] = options
     request.session["records_query_string"] = ""
     records_query = Transactions.objects.filter(user=request.user)
-    records = records_query.values('account__nickname', 'budget__category_display', 'budget__category_name', 'transaction_id', 'amount', 'transaction_date', 'transaction_description', 'budget', 'note', 'recurring', 'user', 'account')
+    records = records_query.order_by('transaction_id', 'transaction_date').values('account__nickname', 'budget__category_display', 'budget__category_name', 'transaction_id', 'amount', 'transaction_date', 'transaction_description', 'budget', 'note', 'recurring', 'user', 'account')
     for item in records:
         item["transaction_date"] = item["transaction_date"].strftime('%b %d, %Y')
     records_pages = get_query_pages(records, 40)
@@ -72,6 +72,8 @@ def query1(request):
     year = request.POST.get("year")
     month = request.POST.get("month")
     query_string = f"{month}/{year}"
+    if category_name != "all":
+        query_string = f"{category_name} in {month}/{year}".title()
     request.session["records_query_string"] = query_string
     options = request.session["budget_options"]
     filters = {"user": request.user}
@@ -84,7 +86,7 @@ def query1(request):
     elif category_name != "all":
         filters["budget"] = Budgets.objects.filter(user=request.user, category_name=category_name).first()
         request.session["category_selected"] = filters["budget"].category_display + ",  "
-    records = Transactions.objects.filter(**filters).values('account__nickname', 'budget__category_name', 'budget__category_display', 'transaction_id', 'amount', 'transaction_date', 'transaction_description', 'budget', 'note', 'recurring', 'user', 'account')
+    records = Transactions.objects.filter(**filters).order_by('transaction_id', 'transaction_date').values('account__nickname', 'budget__category_name', 'budget__category_display', 'transaction_id', 'amount', 'transaction_date', 'transaction_description', 'budget', 'note', 'recurring', 'user', 'account')
     for item in records:
         item["transaction_date"] = item["transaction_date"].strftime('%b %d, %Y')
     records_pages = get_query_pages(records, 40)
@@ -102,7 +104,10 @@ def query2(request):
     start_date_object = datetime.strptime(start_date, "%Y-%m-%d")
     end_date = request.POST.get("end_date")
     end_date_object = datetime.strptime(end_date, "%Y-%m-%d")
-    query_string = f"{start_date_object.strftime("%d %b %Y")} to {end_date_object.strftime("%d %b %Y")} inclusive"
+    if category_name != "all":
+        query_string = f"{category_name} in {start_date_object.strftime("%d %b %Y")} to {end_date_object.strftime("%d %b %Y")} inclusive".title()
+    else:
+        query_string = f"{start_date_object.strftime("%d %b %Y")} to {end_date_object.strftime("%d %b %Y")} inclusive"
     request.session["records_query_string"] = query_string
     options = request.session["budget_options"]
     filters = {"user": request.user, "transaction_date__gte": start_date, "transaction_date__lte": end_date}
@@ -111,7 +116,7 @@ def query2(request):
     elif category_name != "all":
         filters["budget"] = Budgets.objects.filter(user=request.user, category_name=category_name).first()
         request.session["category_selected"] = filters["budget"].category_display + ",  "
-    records = Transactions.objects.filter(**filters).values('account__nickname', 'budget__category_name', 'budget__category_display', 'transaction_id', 'amount', 'transaction_date', 'transaction_description', 'budget', 'note', 'recurring', 'user', 'account')
+    records = Transactions.objects.filter(**filters).order_by('transaction_id', 'transaction_date').values('account__nickname', 'budget__category_name', 'budget__category_display', 'transaction_id', 'amount', 'transaction_date', 'transaction_description', 'budget', 'note', 'recurring', 'user', 'account')
     for item in records:
         item["transaction_date"] = item["transaction_date"].strftime('%b %d, %Y')
     records_pages = get_query_pages(records, 40)
