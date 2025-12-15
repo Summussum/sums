@@ -41,7 +41,10 @@ class Transformer():
                 line["transaction_date"] = datetime.strptime(line["transaction_date"], self.date_format).isoformat()[:10]
 
     def format_amounts(self):
-        if "deposits" in self.fieldnames:
+        if self.translator["deposits"] == "":
+            for line in self.record:
+                    line["amount"] = float(line["amount"].replace(",", ""))
+        elif "deposits" in self.fieldnames:
             for line in self.record:
                 line["amount"] = -abs(float(line["amount"].replace(",", "")))
                 line["amount"] += abs(float(line["deposits"].replace(",", "")))
