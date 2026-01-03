@@ -48,6 +48,7 @@ def index(request):
 
 
 
+@login_required
 def new_target(request):
     budget_options = Budgets.objects.filter(user=request.user).values()
     options = []
@@ -69,6 +70,7 @@ def new_target(request):
         
 
 
+@login_required
 def assign(request):
     target = request.session["chronicle_target"]
     category_name = request.POST.get("category_name")
@@ -91,6 +93,7 @@ def assign(request):
     return HttpResponse(html)
 
 
+@login_required
 def new_budget(request):
     create_budget_category(request)
     mutable = request.POST._mutable
@@ -100,6 +103,7 @@ def new_budget(request):
     return assign(request)
 
 
+@login_required
 def edit(request, transaction_id):
     category_name = request.POST.get("category_name")
     transaction_id = transaction_id

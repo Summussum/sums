@@ -35,7 +35,7 @@ def create_budget_category(request):
         response["HX-Retarget"] = "#error_message"
         return response
     if Budgets.objects.filter(category_name=new_category_name, user=request.user).exists():
-        response = render_block_to_string("Allocate/error_partials.html", "already_exists", request=request)
+        html = render_block_to_string("Allocate/error_partials.html", "already_exists", request=request)
         response = HttpResponse(html)
         response["HX-Retarget"] = "#error_message"
         return response

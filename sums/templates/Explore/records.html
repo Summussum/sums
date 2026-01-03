@@ -83,6 +83,7 @@
                                         <th>Note</th>
                                         <th>Category</th>
                                         <th>Edit</th>
+                                        <th>Delete</th>
                                 </tr>
                         </thead>
                         <tbody>
@@ -104,6 +105,7 @@
                                                         {% endfor %}
                                                 </select>
                                         </td>
+                                        <td><button hx-post="/explorer/delete/{{record.transaction_id}}" hx-target="#record_{{record.transaction_id}}" hx-swap="outerHTML">Del</button></td>
                                 </tr>
                                 {% endfor %}
                         </tbody>

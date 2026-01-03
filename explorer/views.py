@@ -217,6 +217,20 @@ def filter_form(request, query_select):
     response["HX-Redirect"] = "/explorer/records/"
     return response
 
+@login_required
+def delete_record(request, record_id):
+    record = Transactions.objects.get(user=request.user, transaction_id=record_id)
+    if not record:
+        html = render(request, "<tr><td colspan='5'>could not be deleted</td></tr>")
+        response = HttpResponse(html)
+        response["HX-Swap"] = "afterend"
+        return HttpResponse(html)
+    description = record.transaction_description
+    message = f"transaction, [{record.transaction_description}] was deleted"
+    record.delete()
+    html = render_block_to_string("Explore/partials.html", "delete_record", request=request)
+    return HttpResponse(html)
+
 
 def teapot(request):
     return render(

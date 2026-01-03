@@ -13,5 +13,6 @@ urlpatterns = [
    path("query1/", views.query1, name="records_query1"),
    path("query2/", views.query2, name="records_query2"),
    path("filter_form/<int:query_select>", views.filter_form, name="explorer_filter_form"),
-   path("records/<int:page_num>", views.change_page, name="records_change_page")
+   path("records/<int:page_num>", views.change_page, name="records_change_page"),
+   path("delete/<int:record_id>", views.delete_record, name="records_delete_record")
 ]
