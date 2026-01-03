@@ -40,7 +40,7 @@ def index(request):
 
         request.session["unclassified"] = chronicle_load
         request, chronicle_target, options = new_target(request)
-        response = render(request, "Chronicle/index.html", context={"target":chronicle_target, "options":options, "chronicle_history": chronicle_history})
+        response = render(request, "Chronicle/index.html", context={"target":chronicle_target, "options":options, "chronicle_history": chronicle_history, "chronicle_count": request.session["chronicle_count"]})
     else:
         response = render(request, "Chronicle/resolved.html", context={"chronicle_history": chronicle_history, "options": options})
     response["HX-Push-Url"] = request.path
@@ -62,6 +62,7 @@ def new_target(request):
     if request.session["unclassified"]:
         chronicle_target = request.session["unclassified"].pop()
         request.session["chronicle_target"] = chronicle_target
+        request.session["chronicle_count"] = len(request.session["unclassified"])+1
         return request, chronicle_target, options
     else:
         chronicle_target = []
@@ -87,7 +88,7 @@ def assign(request):
     chronicle_history = request.session["chronicle_recent"][-1:-11:-1]
     request, chronicle_target, options = new_target(request)
     if chronicle_target:
-        html = render_block_to_string("Chronicle/partials.html", "chronicle", context={"target": chronicle_target, "chronicle_history": chronicle_history, "options": options}, request=request)
+        html = render_block_to_string("Chronicle/partials.html", "chronicle", context={"target": chronicle_target, "chronicle_history": chronicle_history, "options": options, "chronicle_count": request.session["chronicle_count"]}, request=request)
     else:
         html = render_block_to_string("Chronicle/partials.html", "complete", context={"chronicle_history": chronicle_history, "options": options}, request=request)
     return HttpResponse(html)
