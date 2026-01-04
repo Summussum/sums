@@ -152,6 +152,10 @@ def edit_record(request, transaction_id):
 @login_required
 def monthly_reports(request):
     budgets = Budgets.objects.filter(user=request.user)
+    income_budget = budgets.filter(budget_type="income").first()
+    if not income_budget:
+        income_budget.amount_amount = 0.00
+        income_budget.category_display = "Income"
     total_budget = 0.00
     ledger = {}
     for budget in budgets:
@@ -207,10 +211,13 @@ def monthly_reports(request):
                     else:
                         report["income"]["subtotal"] += subtotal
                         report["income"]["budget_amount"] += budget_amount
-            report["income"]["diff_color"] = "black"
-            if report["income"]["diff"] < 0:
-                report["income"]["diff_color"] = "red"
-            report["income"]["diff"] = round((report["income"]["subtotal"] - report["income"]["budget_amount"]), 2)
+            if report["income"]:
+                report["income"]["diff_color"] = "black"
+                if report["income"]["diff"] < 0:
+                    report["income"]["diff_color"] = "red"
+                report["income"]["diff"] = round((report["income"]["subtotal"] - report["income"]["budget_amount"]), 2)
+            else:
+                report["income"] = {"category_display": income_budget.category_display, "budget_amount": income_budget.budget_amount, "subtotal": 0.00, "diff": 0, "diff_color": "black"}
             report["total_expenses"] = round(report["total_expenses"], 2)
             report["total_diff"] = round((total_budget + report["total_expenses"]), 2)
             if report["total_diff"] < 0:
