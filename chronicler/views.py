@@ -20,10 +20,7 @@ def index(request):
     budget_options = Budgets.objects.filter(user=request.user).values()
     options = []
     for item in budget_options:
-        if item['budget_amount'] is not None:
-            item['budget_amount'] = float(item['budget_amount'])
-        if item['annual_budget'] is not None:
-            item['annual_budget'] = float(item['annual_budget'])
+        item['budget_amount'] = float(item['budget_amount'])
         options.append(item)
     request.session["budget_options"] = options
     if request.session.get("chronicle_recent"):
@@ -53,10 +50,7 @@ def new_target(request):
     budget_options = Budgets.objects.filter(user=request.user).values()
     options = []
     for item in budget_options:
-        if item['budget_amount'] is not None:
-            item['budget_amount'] = float(item['budget_amount'])
-        if item['annual_budget'] is not None:
-            item['annual_budget'] = float(item['annual_budget'])
+        item['budget_amount'] = float(item['budget_amount'])
         options.append(item)
     request.session["budget_options"] = options
     if request.session["unclassified"]:
