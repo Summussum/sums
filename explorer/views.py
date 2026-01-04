@@ -30,10 +30,7 @@ def query_records(request):
     budget_options = budgets.values()
     options = []
     for item in budget_options:
-        if item['budget_amount'] is not None:
-            item['budget_amount'] = float(item['budget_amount'])
-        if item['annual_budget'] is not None:
-            item['annual_budget'] = float(item['annual_budget'])
+        item['budget_amount'] = float(item['budget_amount'])
         options.append(item)
     request.session["category_selected"] = ""
     request.session["budget_options"] = options
@@ -160,7 +157,8 @@ def monthly_reports(request):
     for budget in budgets:
         budget_float = float(budget.budget_amount)
         ledger[budget.category_display] = budget_float
-        total_budget += budget_float
+        if budget.budget_type == "expense":
+            total_budget += budget_float
     records_query = Transactions.objects.filter(user=request.user)
     years_list = records_query.dates('transaction_date', 'year')
     years = []
@@ -178,7 +176,7 @@ def monthly_reports(request):
     #logger.error(f"First month: {months[0]}, Months List: {months}")
     for year in years[::-1]:
         for i, month in enumerate(months[::-1]):
-            report = {"year": year, "month": month, "month_string": month_strings[i], "data": [], "total_expenses": 0.00, "total_diff": 0.00, "diff_color": "black"}
+            report = {"year": year, "month": month, "month_string": month_strings[i], "data": [], "total_expenses": 0.00, "total_diff": 0.00, "diff_color": "black", "income": {}}
             expense_query = Transactions.objects.filter(user=request.user, transaction_date__year=year, transaction_date__month=month).values("budget_id", "budget__category_display").annotate(Sum("amount"))
             if not expense_query:
                 continue
@@ -194,12 +192,26 @@ def monthly_reports(request):
                 if diff < 0:
                     diff_color = "red"
                 datum = {"category_display": category_display, "budget_amount": budget_amount, "subtotal": subtotal, "diff": diff, "diff_color": diff_color}
-                report["data"].append(datum)
-                report["total_expenses"] += subtotal
+                if budgets.get(category_display=entry["budget__category_display"]).budget_type == "expense":
+                    report["data"].append(datum)
+                    report["total_expenses"] += subtotal
+                elif budgets.get(category_display=entry["budget__category_display"]).budget_type == "income":
+                    if not report["income"]:
+                        datum["diff"] = subtotal - budget_amount
+                        datum["category_display"] = "Income"
+                        report["income"] = datum
+                    else:
+                        report["income"]["subtotal"] += subtotal
+                        report["income"]["budget_amount"] += budget_amount
+            report["income"]["diff_color"] = "black"
+            if report["income"]["diff"] < 0:
+                report["income"]["diff_color"] = "red"
+            report["income"]["diff"] = round((report["income"]["subtotal"] - report["income"]["budget_amount"]), 2)
             report["total_expenses"] = round(report["total_expenses"], 2)
             report["total_diff"] = round((total_budget + report["total_expenses"]), 2)
             if report["total_diff"] < 0:
                 report["diff_color"] = "red"
+            report["balance"] = round((report["income"]["subtotal"] + report["total_expenses"]), 2)
             expense_list.append(report)
             #logger = logging.getLogger(__name__)
             #logger.error(f"report: {report}, expenses: {expense_list}")

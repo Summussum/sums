@@ -44,10 +44,21 @@
                 </tr>
                 {% endfor %}
                 <tr>
-                    <td>Totals:</td>
-                    <td>{{total_budget}}</td>
-                    <td>{{report.total_expenses}}</td>
-                    <td><div style="color: {{report.diff_color}};">{{report.total_diff}}</td>
+                    <td><b>Income:</b></td>
+                    <td><b>{{report.income.budget_amount}}</b></td>
+                    <td><b>{{report.income.subtotal}}</b></td>
+                    <td><div style="color: {{report.income.diff_color}};"><b>{{report.income.diff}}</b></div></td>
+                </tr>
+                <tr>
+                    <td><b>Total Expenses:</b></td>
+                    <td><b>{{total_budget}}</b></td>
+                    <td><b>{{report.total_expenses}}</b></td>
+                    <td><div style="color: {{report.diff_color}};"><b>{{report.total_diff}}</b></td>
+                </tr>
+                <tr>
+                    <td colspan="2"><b>Monthly Balance:</b></td>
+                    <td><b>{{report.balance}}</b></td>
+                    <td></td>
                 </tr>
             </tbody>
         </table>
