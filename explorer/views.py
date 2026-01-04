@@ -192,7 +192,11 @@ def monthly_reports(request):
                 if diff < 0:
                     diff_color = "red"
                 datum = {"category_display": category_display, "budget_amount": budget_amount, "subtotal": subtotal, "diff": diff, "diff_color": diff_color}
-                if budgets.get(category_display=entry["budget__category_display"]).budget_type == "expense":
+                if entry["budget__category_display"] == None:
+                    datum["category_display"] = "Uncategorized"
+                    report["data"].append(datum)
+                    report["total_expenses"] += subtotal
+                elif budgets.get(category_display=entry["budget__category_display"]).budget_type == "expense":
                     report["data"].append(datum)
                     report["total_expenses"] += subtotal
                 elif budgets.get(category_display=entry["budget__category_display"]).budget_type == "income":
