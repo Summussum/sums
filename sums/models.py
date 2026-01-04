@@ -27,7 +27,7 @@ class Budgets(models.Model):
     category_name = models.TextField()
     category_display = models.TextField()
     budget_amount = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
-    annual_budget = models.BooleanField(default=False)
+    budget_type = models.TextField(default="expense")
     keywords = models.JSONField(null=True, blank=True)
 
 

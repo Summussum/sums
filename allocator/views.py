@@ -20,10 +20,7 @@ def create_budget_category(request):
     new_category_display = request.POST.get("category_display")
     new_category_name = slugify(new_category_display)
     amount = request.POST.get("amount")
-    if request.POST.get("annual"):
-        annual_budget=True
-    else:
-        annual_budget=False
+    budget_type = request.POST.get("budget_type")
     if new_category_display == "":
         html = render_block_to_string("Allocate/error_partials.html", "no_category_name", request=request)
         response = HttpResponse(html)
@@ -39,7 +36,7 @@ def create_budget_category(request):
         response = HttpResponse(html)
         response["HX-Retarget"] = "#error_message"
         return response
-    new_budget = Budgets(user=request.user, category_name=new_category_name, category_display=new_category_display, budget_amount=request.POST.get("amount"), annual_budget=annual_budget)
+    new_budget = Budgets(user=request.user, category_name=new_category_name, category_display=new_category_display, budget_amount=request.POST.get("amount"), budget_type=budget_type)
     new_budget.save()
     return display_active_budget(request)
 
@@ -49,6 +46,7 @@ def display_active_budget(request):
     for object in Budgets.objects.filter(user=request.user):
         category_list.append(object)
     category_list = sorted(category_list, key=lambda x: x.category_name)
+    category_list = sorted(category_list, key=lambda x: x.budget_type)
     graph_div = return_pie(request.user)
     context = {"category_list": category_list, "graph_div": graph_div}
     template = loader.get_template("Allocate/budget_display.html")
@@ -58,10 +56,7 @@ def display_active_budget(request):
 def allocate(request, category_name):
     if request.method == 'GET':
         budget = Budgets.objects.filter(category_name=category_name, user=request.user).first()
-        if budget.budget_amount:
-            amount = budget.budget_amount
-        else:
-            amount = budget.annual_budget
+        amount = budget.budget_amount
         html = render_block_to_string("Allocate/allocator.html", "inline_editor", context={"item": budget, "amount": amount}, request=request)
         return HttpResponse(html)
 
@@ -90,10 +85,7 @@ def allocate(request, category_name):
             return response
         # edit budget
         instance = Budgets.objects.filter(category_name=category_name).first()
-        if request.POST.get("annual"):
-            instance.annual_budget = True
-        else:
-            instance.annual_budget = False
+        instance.budget_type = request.POST.get("budget_type")
         instance.category_display = new_category_display
         instance.category_name = new_category_name
         instance.budget_amount = amount

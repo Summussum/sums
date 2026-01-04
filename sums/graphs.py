@@ -14,13 +14,15 @@ def return_pie(user_id):
     total = 0
     budgets = Budgets.objects.filter(user_id=user_id)
     for object in budgets:
-        labels.append(f"{object.category_display}: ${object.budget_amount}")
-        amounts.append(object.budget_amount)
-        total += object.budget_amount
+        if object.budget_type == "expense":
+            labels.append(f"{object.category_display}: ${object.budget_amount}")
+            amounts.append(object.budget_amount)
+            total += object.budget_amount
 
     df = {"labels": labels, "amounts": amounts}
 
     fig = px.pie(df, values='amounts', names='labels', title=f'Monthly Total: ${total}')
+    fig.update_traces(textposition='inside', textinfo='label', hovertemplate="%{percent}")
     fig.show()
     graph_div = plotly.offline.plot(fig, auto_open = False, output_type="div")
     return graph_div

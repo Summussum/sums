@@ -6,7 +6,7 @@
     </td>
     <td>{{ item.category_display }}</td>
     <td>${{ item.budget_amount }}</td>
-    <td>{{ item.annual_budget }}</td>
+    <td>{{ item.budget_type }}</td>
     <td>
         <button hx-delete="/allocator/{{item.category_name}}" hx-target="#{{item.category_name}}" hx-swap="outerHTML" hx-indicator="#{{item.category_name}}_del_loading">Delete</button>
         <img id="{{item.category_name}}_del_loading" class="htmx-indicator" src="/static/loading.svg">
@@ -23,7 +23,12 @@
         <img id="{{item.category_name}}_cancel_loading" class="htmx-indicator" src="/static/loading.svg">
         <input type="text" name="category_display" value="{{category_display}}">
         <input type="text" name="amount" value="{{amount}}">
-        <input type="checkbox" name="annual">
+        <select name="budget_type">
+            <option value="expense">Expense</option>
+            <option value="income">Income</option>
+            <option value="annual">Annual</option>
+            <option value="ignore">Ignore</option>
+        </select>
         <div> Annual expense</div>
         <input type="submit" hx-post="/allocator/{{category_name}}" hx-target="#budget_display" hx-swap="outerHTML" hx-indicator="#{{item.category_name}}_submit_loading">
         <img id="{{item.category_name}}_submit_loading" class="htmx-indicator" src="/static/loading.svg">
@@ -41,7 +46,12 @@
     </td>
     <td><input type="text" name="category_display" value="{{item.category_display}}"><div id="name_in_use{{item.category_name}}"></div></td>
     <td><input type="text" name="amount" value="{{amount}}"></td>
-    <td><input type="checkbox" name="annual"><div> Annual expense</div></td>
+    <td><select name="budget_type">
+            <option value="expense">Expense</option>
+            <option value="income">Income</option>
+            <option value="annual">Annual</option>
+            <option value="ignore">Ignore</option>
+        </select></td>
     <td>
         <button hx-post="/allocator/{{item.category_name}}" hx-target="#{{item.category_name}}" hx-include="#{{item.category_name}}" hx-swap="outerHTML" hx-indicator="#{{item.category_name}}_submit_loading">Submit</button>
         <img id="{{item.category_name}}_submit_loading" class="htmx-indicator" src="/static/loading.svg">

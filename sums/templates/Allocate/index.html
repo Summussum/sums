@@ -20,8 +20,12 @@
             <label for name="amount">Amount to allocate: $</label>
             <input type="number" step=".01" name="amount" placeholder="50.00"><br><br>
 
-            <input type="checkbox" name="annual">
-            <label for name="annual"> Is this category tracked yearly instead of monthly?</label><br><br>
+            <div>Budget category type: <select name="budget_type">
+                <option value="expense">Expense</option>
+                <option value="income">Income</option>
+                <option value="annual">Annual</option>
+                <option value="ignore">Ignore</option>
+            </select></div><br><br>
             <input type="submit" value="Submit" hx-indicator="#create_budget_loading">
             <img id="create_budget_loading" class="htmx-indicator" src="/static/loading.svg">
         </form>

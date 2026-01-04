@@ -1,6 +1,6 @@
 # Sum's Sums
 
-As of 12/07/25, this application is a work in progress developed by Summussum, correlating to the repository: github.com/Summussum/sums.
+As of Jan 2026, this application is a work in progress developed by Summussum, correlating to the repository: github.com/Summussum/sums.
 
 This is an exploratory project to develop a personal finances application that manages budgets, tracks expenses, and offers various tools to guide financial decisions based on transaction history and current budget allocations.
 
@@ -17,7 +17,7 @@ UPDATE: Sum's Sums will be hosted on the url https://summussum.com with occasion
 ________________________________________________________________________
                                  QUICK BUILD:
 
-This repository is set up to build the application with Docker. If you have Docker running, please navigate to the base directory, housing docker-compose.yml. From that location, run the docker CLI command:\
+This repository is set up to build the application with Docker. If you have Docker installed and running, please navigate to the base directory, housing docker-compose.yml. From that location, run the docker CLI command:\
 `docker compose up`
 
 As long as your environment is defined as listed below, you should now be able to navigate to the address of your local host and port 8000 in your preferred browser to access the application.\
