@@ -84,7 +84,7 @@ def allocate(request, category_name):
             response["HX-Reswap"] = "innerHTML"
             return response
         # edit budget
-        instance = Budgets.objects.filter(category_name=category_name).first()
+        instance = Budgets.objects.filter(category_name=category_name, user=request.user).first()
         instance.budget_type = request.POST.get("budget_type")
         instance.category_display = new_category_display
         instance.category_name = new_category_name
@@ -96,7 +96,7 @@ def allocate(request, category_name):
 
 
     elif request.method == 'DELETE':
-        budget = Budgets.objects.filter(category_name=category_name).first()
+        budget = Budgets.objects.filter(category_name=category_name, user=request.user).first()
         category_display = budget.category_display
         amount = budget.budget_amount
         budget.delete()
@@ -105,7 +105,7 @@ def allocate(request, category_name):
 
 @login_required
 def reset(request, category_name):
-    budget = Budgets.objects.filter(category_name=category_name).first()
+    budget = Budgets.objects.filter(category_name=category_name, user=request.user).first()
     context = {"item": budget}
     html = render_block_to_string("Allocate/allocator.html", "data", context=context, request=request)
     return HttpResponse(html)

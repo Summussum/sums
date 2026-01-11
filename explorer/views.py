@@ -36,7 +36,7 @@ def query_records(request):
     request.session["budget_options"] = options
     request.session["records_query_string"] = ""
     records_query = Transactions.objects.filter(user=request.user)
-    records = records_query.order_by('transaction_id', 'transaction_date').values('account__nickname', 'budget__category_display', 'budget__category_name', 'transaction_id', 'amount', 'transaction_date', 'transaction_description', 'budget', 'note', 'recurring', 'user', 'account')
+    records = records_query.order_by('-transaction_date', 'transaction_id').values('account__nickname', 'budget__category_display', 'budget__category_name', 'transaction_id', 'amount', 'transaction_date', 'transaction_description', 'budget', 'note', 'recurring', 'user', 'account')
     for item in records:
         item["transaction_date"] = item["transaction_date"].strftime('%b %d, %Y')
     records_pages = get_query_pages(records, 40)
@@ -83,7 +83,7 @@ def query1(request):
     elif category_name != "all":
         filters["budget"] = Budgets.objects.filter(user=request.user, category_name=category_name).first()
         request.session["category_selected"] = filters["budget"].category_display + ",  "
-    records = Transactions.objects.filter(**filters).order_by('transaction_id', 'transaction_date').values('account__nickname', 'budget__category_name', 'budget__category_display', 'transaction_id', 'amount', 'transaction_date', 'transaction_description', 'budget', 'note', 'recurring', 'user', 'account')
+    records = Transactions.objects.filter(**filters).order_by('-transaction_date', 'transaction_id').values('account__nickname', 'budget__category_name', 'budget__category_display', 'transaction_id', 'amount', 'transaction_date', 'transaction_description', 'budget', 'note', 'recurring', 'user', 'account')
     for item in records:
         item["transaction_date"] = item["transaction_date"].strftime('%b %d, %Y')
     records_pages = get_query_pages(records, 40)
@@ -113,7 +113,7 @@ def query2(request):
     elif category_name != "all":
         filters["budget"] = Budgets.objects.filter(user=request.user, category_name=category_name).first()
         request.session["category_selected"] = filters["budget"].category_display + ",  "
-    records = Transactions.objects.filter(**filters).order_by('transaction_id', 'transaction_date').values('account__nickname', 'budget__category_name', 'budget__category_display', 'transaction_id', 'amount', 'transaction_date', 'transaction_description', 'budget', 'note', 'recurring', 'user', 'account')
+    records = Transactions.objects.filter(**filters).order_by('-transaction_date', 'transaction_id').values('account__nickname', 'budget__category_name', 'budget__category_display', 'transaction_id', 'amount', 'transaction_date', 'transaction_description', 'budget', 'note', 'recurring', 'user', 'account')
     for item in records:
         item["transaction_date"] = item["transaction_date"].strftime('%b %d, %Y')
     records_pages = get_query_pages(records, 40)
