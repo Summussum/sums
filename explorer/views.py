@@ -102,9 +102,9 @@ def query2(request):
     end_date = request.POST.get("end_date")
     end_date_object = datetime.strptime(end_date, "%Y-%m-%d")
     if category_name != "all":
-        query_string = f"{category_name} in {start_date_object.strftime("%d %b %Y")} to {end_date_object.strftime("%d %b %Y")} inclusive".title()
+        query_string = f"{category_name} in {start_date_object.strftime('%d %b %Y')} to {end_date_object.strftime('%d %b %Y')} inclusive".title()
     else:
-        query_string = f"{start_date_object.strftime("%d %b %Y")} to {end_date_object.strftime("%d %b %Y")} inclusive"
+        query_string = f"{start_date_object.strftime('%d %b %Y')} to {end_date_object.strftime('%d %b %Y')} inclusive"
     request.session["records_query_string"] = query_string
     options = request.session["budget_options"]
     filters = {"user": request.user, "transaction_date__gte": start_date, "transaction_date__lte": end_date}
