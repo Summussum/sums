@@ -43,6 +43,7 @@
                 {% autoescape off %}
                 <p><a {{page_links.first_link}} hx-swap="outerHTML" hx-target="#record_table">First</a> | <a {{page_links.prev_link}} hx-swap="outerHTML" hx-target="#record_table">Prev</a> | Page <b>{{page_links.page_num}}</b> of <b>{{page_links.page_count}}</b> | <a {{page_links.next_link}} hx-swap="outerHTML" hx-target="#record_table">Next</a> | <a {{page_links.last_link}} hx-swap="outerHTML" hx-target="#record_table">Last</a></p>
                 {% endautoescape %}
+                <p>{{total_string}}{{total|floatformat:"2g"}}</p>
                 <table class="center_table">
                         <caption>RECORDS: <div id="date_query">{{query_string}}</div></caption>
                         <thead>
@@ -62,7 +63,7 @@
                                 {% for record in records %}
                                 <tr id="record_{{ record.transaction_id}}">
                                         <td>{{ record.transaction_date }}</td>
-                                        <td>{{ record.amount }}</td>
+                                        <td>{{ record.amount|floatformat:"2g" }}</td>
                                         <td>{{ record.transaction_description }}</td>
                                         <td>{{ record.account__nickname }}</td>
                                         <td>{{ record.recurring }}</td>

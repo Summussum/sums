@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from render_block import render_block_to_string
 from django.contrib.auth.decorators import login_required
-from sums.tools import get_query_pages, get_page_links
+from sums.tools import get_query_pages, get_page_links, get_total_string
 from sums.models import Transactions, Budgets
 from http import HTTPStatus
 from datetime import datetime, date
@@ -29,6 +29,7 @@ def query_records(request):
     budgets = Budgets.objects.filter(user=request.user)
     budget_options = budgets.values()
     options = []
+    total = 0.00
     for item in budget_options:
         item['budget_amount'] = float(item['budget_amount'])
         options.append(item)
@@ -38,6 +39,7 @@ def query_records(request):
     records_query = Transactions.objects.filter(user=request.user)
     records = records_query.order_by('-transaction_date', 'transaction_id').values('account__nickname', 'budget__category_display', 'budget__category_name', 'transaction_id', 'amount', 'transaction_date', 'transaction_description', 'budget', 'note', 'recurring', 'user', 'account')
     for item in records:
+        total += item["amount"]
         item["transaction_date"] = item["transaction_date"].strftime('%b %d, %Y')
     records_pages = get_query_pages(records, 40)
     #logger.error(len(records_pages))
@@ -55,8 +57,9 @@ def query_records(request):
                "years": years
                }
     request.session["records_query_context"] = json.dumps({"dates": dates, "options": options})
+    request.session["query_total"] = total
     page_links = get_page_links(request, 1, "/explorer/records/")
-    response = render(request, "Explore/records.html", context={"records": records_pages[0], "dates": dates, "options": options, "page_num": 1, "page_count": len(records_pages), "page_links": page_links})
+    response = render(request, "Explore/records.html", context={"records": records_pages[0], "dates": dates, "options": options, "page_num": 1, "page_count": len(records_pages), "page_links": page_links, "total": abs(total), "total_string": get_total_string(total)})
     #response = render(request, "Explore/records.html", context={"records": records, "dates": dates, "options": options})
     response["HX-Push-Url"] = request.path
     #logger.error(response)
@@ -69,6 +72,7 @@ def query1(request):
     year = request.POST.get("year")
     month = request.POST.get("month")
     query_string = f"{month}/{year}"
+    total = 0.00
     if category_name != "all":
         query_string = f"{category_name} in {month}/{year}".title()
     request.session["records_query_string"] = query_string
@@ -85,11 +89,13 @@ def query1(request):
         request.session["category_selected"] = filters["budget"].category_display + ",  "
     records = Transactions.objects.filter(**filters).order_by('-transaction_date', 'transaction_id').values('account__nickname', 'budget__category_name', 'budget__category_display', 'transaction_id', 'amount', 'transaction_date', 'transaction_description', 'budget', 'note', 'recurring', 'user', 'account')
     for item in records:
+        total += item["amount"]
         item["transaction_date"] = item["transaction_date"].strftime('%b %d, %Y')
     records_pages = get_query_pages(records, 40)
     request.session["records_pages"] = json.dumps(records_pages)
+    request.session["query_total"] = total
     page_links = get_page_links(request, 1, "/explorer/records/")
-    html = render_block_to_string("Explore/partials.html", "record_table", context={"records": records_pages[0], "query_string": query_string, "options": options, "category_selected": request.session["category_selected"], "page_links": page_links}, request=request)
+    html = render_block_to_string("Explore/partials.html", "record_table", context={"records": records_pages[0], "query_string": query_string, "options": options, "category_selected": request.session["category_selected"], "page_links": page_links, "total": abs(total), "total_string": get_total_string(total)}, request=request)
     #logger.error(html)
     return HttpResponse(html)
 
@@ -101,6 +107,7 @@ def query2(request):
     start_date_object = datetime.strptime(start_date, "%Y-%m-%d")
     end_date = request.POST.get("end_date")
     end_date_object = datetime.strptime(end_date, "%Y-%m-%d")
+    total = 0.00
     if category_name != "all":
         query_string = f"{category_name} in {start_date_object.strftime('%d %b %Y')} to {end_date_object.strftime('%d %b %Y')} inclusive".title()
     else:
@@ -115,19 +122,22 @@ def query2(request):
         request.session["category_selected"] = filters["budget"].category_display + ",  "
     records = Transactions.objects.filter(**filters).order_by('-transaction_date', 'transaction_id').values('account__nickname', 'budget__category_name', 'budget__category_display', 'transaction_id', 'amount', 'transaction_date', 'transaction_description', 'budget', 'note', 'recurring', 'user', 'account')
     for item in records:
+        total += item["amount"]
         item["transaction_date"] = item["transaction_date"].strftime('%b %d, %Y')
     records_pages = get_query_pages(records, 40)
     request.session["records_pages"] = json.dumps(records_pages)
+    request.session["query_total"] = total
     page_links = get_page_links(request, 1, "/explorer/records/")
-    html = render_block_to_string("Explore/partials.html", "record_table", context={"records": records_pages[0], "query_string": query_string, "options": options, "category_selected": request.session["category_selected"], "page_links": page_links}, request=request)
+    html = render_block_to_string("Explore/partials.html", "record_table", context={"records": records_pages[0], "query_string": query_string, "options": options, "category_selected": request.session["category_selected"], "page_links": page_links, "total": abs(total), "total_string": get_total_string(total)}, request=request)
     return HttpResponse(html)
 
 def change_page(request, page_num):
     page = json.loads(request.session["records_pages"])[page_num-1]
     options = request.session["budget_options"]
     query_string = request.session["records_query_string"]
+    total = request.session["query_total"]
     page_links = get_page_links(request, page_num, "/explorer/records/")
-    html = render_block_to_string("Explore/partials.html", "record_table", context={"records": page, "query_string": query_string, "options": options, "category_selected": request.session["category_selected"], "page_links": page_links}, request=request)
+    html = render_block_to_string("Explore/partials.html", "record_table", context={"records": page, "query_string": query_string, "options": options, "category_selected": request.session["category_selected"], "page_links": page_links, "total": abs(total), "total_string": get_total_string(total)}, request=request)
     return HttpResponse(html)
 
 

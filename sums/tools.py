@@ -23,3 +23,10 @@ def get_page_links(request, page_num, base_url):
     if next_page > page_count:
         page_links["next_link"] = ""
     return page_links
+
+
+def get_total_string(total):
+    total_string = "Total money gained: $"
+    if total < 0:
+        total_string = "Total money spent: $"
+    return total_string
