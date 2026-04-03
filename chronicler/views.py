@@ -9,9 +9,10 @@ from allocator.views import create_budget_category
 from django.template.defaultfilters import slugify
 from django.forms.models import model_to_dict
 from datetime import datetime
-import json
+import json, logging
 
 # Create your views here.
+logger = logging.getLogger(__name__)
 
 
 @login_required
@@ -120,8 +121,8 @@ def edit(request, transaction_id):
     chronicle_recent = request.session.get("chronicle_recent")
     for i, item in enumerate(chronicle_recent):
         if item["transaction_id"] == transaction_id:
-            item["category_name"] = entry.budget__category_name
-            item["category_display"] = entry.budget__category_display
+            item["budget__category_name"] = entry.budget__category_name
+            item["budget__category_display"] = entry.budget__category_display
             if budget is not None:
                 item["budget"] = budget.budget_id
             else:
