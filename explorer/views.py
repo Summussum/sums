@@ -160,12 +160,11 @@ def edit_record(request, transaction_id):
     return HttpResponse(html)
 
 @login_required
-def monthly_reports(request):
+def monthly_reports(request): #Needs handling for no existing budgets in income
     budgets = Budgets.objects.filter(user=request.user)
     income_budget = budgets.filter(budget_type="income").first()
     if not income_budget:
-        income_budget.amount_amount = 0.00
-        income_budget.category_display = "Income"
+        income_budget = Budgets(category_name="temp_income", user=request.user, category_display="temp_income", budget_amount=0.00, budget_type="income")
     total_budget = 0.00
     ledger = {}
     for budget in budgets:
@@ -178,16 +177,14 @@ def monthly_reports(request):
     years = []
     for year in years_list:
         years.append(year.strftime("%Y"))
-    months_list = records_query.dates('transaction_date', 'month')
-    months = []
+    months = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
     month_strings = []
-    for month in months_list:
-        months.append(month.strftime("%m"))
-        month_strings.append(month.strftime("%b"))
+    for month in months:
+        logger.error(f"month is {month}")
+        month_strings.append(date(1900, int(month), 1).strftime('%B'))
     month_strings = month_strings[::-1]
     expense_list = []
-    #logger = logging.getLogger(__name__)
-    #logger.error(f"First month: {months[0]}, Months List: {months}")
+    logger.error(f"First month: {months[0]}, Months List: {months}")
     for year in years[::-1]:
         for i, month in enumerate(months[::-1]):
             report = {"year": year, "month": month, "month_string": month_strings[i], "data": [], "total_expenses": 0.00, "total_diff": 0.00, "diff_color": "black", "income": {}}
